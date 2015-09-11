@@ -26,6 +26,7 @@ logging.basicConfig(filename=current_filename + '_DB.log', filemode='w')
 remote_host = "gene.ac"
 local_host = "127.0.0.1"
 
+
 class DB(object):
     conn = None
     cursor = None

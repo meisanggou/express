@@ -11,6 +11,7 @@ from API.V1 import msg_api
 from Tools.Mysql_db import DB
 
 db = DB()
+db.connect()
 db.execute("SHOW TABLES")
 print(db.fetchall())
 
