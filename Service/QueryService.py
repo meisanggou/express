@@ -39,5 +39,5 @@ if __name__ == '__main__':
     # kd100_info = eq.kd100("yuantong", "200246227212")
     # eDB.new_express_record("yuantong", "200246227212", kd100_info["express_info"], False)
     # eDB.new_listen_record("sto", "229255098587", "zhou5315938@163.com")
-    thread.start_new_thread(eDB.loop_query(), ())
+    thread.start_new_thread(eDB.loop_query, ())
     msg_service.run(host="0.0.0.0", port=2157)

@@ -23,6 +23,11 @@ my_email = MyEmailManager()
 wx = WxManager()
 
 
+@express_wx_view.route("/express/wx/ping/", methods=["GET"])
+def ping():
+    return "true"
+
+
 # 微信主动调用方法
 @express_wx_view.route("/express/wx/", methods=["GET"])
 def check_signature():
