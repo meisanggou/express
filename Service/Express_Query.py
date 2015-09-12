@@ -5,6 +5,7 @@ __author__ = 'zhouheng'
 
 import re
 import requests
+import json
 
 
 class ExpressQuery:
@@ -24,10 +25,13 @@ class ExpressQuery:
         r_text = response.text
         status = re.findall('<span id="Repeater1_lblTime[1-4]_0">([\s\S]*?)</span>', r_text)
         status_code = len(status)
+        completed = False
         for i in range(len(self.sto_status)):
             if status[i] == "":
                 status_code = i
                 break
+        if status_code == len(status):
+            completed = True
         tab_result = re.search('<table cellpadding="0" cellspacing="0" class="tab_result" width="100%">[\s\S]*?</table>', r_text).group()
         record_tr = re.findall('<tr>([\s\S]*?)<\/tr>', tab_result)
         express_info = []
@@ -37,7 +41,7 @@ class ExpressQuery:
             temp_info = record_td[1]
             info = "".join(re.split('</?a[ \S]*?>', temp_info))
             express_info.append({"time": time, "info": info})
-        sto_info = {"express_info": express_info, "status_code": status_code}
+        sto_info = {"express_info": express_info, "status_code": status_code, "completed": completed}
         return sto_info
 
     def zto(self, billcode):
@@ -55,9 +59,11 @@ class ExpressQuery:
         record_li = re.findall('<li class="pr ([\s\S]*?)</li>', state)
         status_key = '<div data-billcode="%s"' % billcode
         index = record_li[0].find(status_key)
+        completed = False
         if index >= 0:
             status_code = 4
             record_li[0] = record_li[0][index + 1:]
+            completed = True
         else:
             status_code = 2
         express_info = []
@@ -67,5 +73,32 @@ class ExpressQuery:
             time = recode_div[1]
             info = "".join(re.split('</?a[ \S]*?>', temp_info))
             express_info.append({"time": time, "info": info})
-        zto_info = {"express_info": express_info, "status_code": status_code}
+        zto_info = {"express_info": express_info, "status_code": status_code, "completed": completed}
         return zto_info
+
+    def kd100(self, comCode, wayBill):
+        url = "http://www.kuaidi100.com/query?type=%s&postid=%s&id=1&valicode=&temp=0.023800994968041778" % (comCode, wayBill)
+        response = requests.get(url)
+        result = json.loads(response.text)
+        express_info = []
+        status_code = 0
+        completed = False
+        if result["message"] == "ok":
+            status_code = int(result["state"]) + 1
+            if status_code == 4:
+                completed = True
+            records = result["data"]
+            record_len = len(records)
+            for index in range(record_len):
+                record = records[record_len-index-1]
+                express_info.append({"time": record["ftime"], "info": record["context"]})
+        kd100_info = {"express_info": express_info, "status_code": status_code, "completed": completed}
+        return kd100_info
+
+    def query(self, comCode, wayBill):
+        if comCode == "sto":
+            return self.sto(wayBill)
+        elif comCode == "zto":
+            return self.zto(wayBill)
+        else:
+            return self.kd100(comCode, wayBill)

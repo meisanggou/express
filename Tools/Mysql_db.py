@@ -141,7 +141,7 @@ class DB(object):
                 if value[5] != "":
                     create_table_sql += " %s" % value[5]
                 create_table_sql += ","
-            create_table_sql = create_table_sql[:-1] + ");"
+            create_table_sql = create_table_sql[:-1] + ") DEFAULT CHARSET=utf8;"
             self.execute(create_table_sql)
             execute_message += "Create Table %s Success \n" % table_name
             return execute_message

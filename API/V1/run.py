@@ -12,8 +12,6 @@ from Tools.Mysql_db import DB
 
 db = DB()
 db.connect()
-db.execute("SHOW TABLES")
-print(db.fetchall())
 
 if __name__ == '__main__':
     msg_api.run(host="0.0.0.0", port=1523)

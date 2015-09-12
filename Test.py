@@ -5,6 +5,7 @@ __author__ = 'ZhouHeng'
 import requests
 import re
 from Service.Express_Query import ExpressQuery
+import json
 
 eq = ExpressQuery()
 
@@ -37,3 +38,9 @@ def yto(waybillNo):
 # for zi in zto_info["express_info"]:
 #     print(zi["time"])
 #     print(zi["info"])
+
+kd100_info = eq.kd100("yuantong", "200246227212 ")
+print(kd100_info["status_code"])
+for kdi in kd100_info["express_info"]:
+    print(kdi["time"])
+    print(kdi["info"])
