@@ -2,11 +2,11 @@
 # !/usr/bin/python
 import sys
 
-sys.path.append(r'..')
+sys.path.append('..')
 
 __author__ = 'zhouheng'
 
-import sys
+
 from flask import Flask
 from Tools.Mysql_db import DB
 
@@ -16,7 +16,6 @@ if sys.getdefaultencoding() != default_encoding:
     sys.setdefaultencoding(default_encoding)
 
 msg_api = Flask(__name__)
-
 
 db = DB()
 db.connect()

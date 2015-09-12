@@ -4,7 +4,7 @@
 
 import sys
 sys.path.append('..')
-from API.V1 import msg_api
+from API_V1 import msg_api
 
 __author__ = 'zhouheng'
 

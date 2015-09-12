@@ -4,7 +4,7 @@
 import json
 import datetime
 from flask import request
-from API.V1 import db, msg_api
+from API_V1 import db, msg_api
 from Tools.Wx import WxManager
 from Tools.MyEmail import MyEmailManager
 

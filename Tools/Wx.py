@@ -42,7 +42,6 @@ class WxManager:
     # 基础
     def get_token_file(self):
         self.token_file = tempfile.gettempdir() + "/express_wx.token"
-        print(self.token_file)
 
     def write_token(self):
         try:
