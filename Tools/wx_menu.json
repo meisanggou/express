@@ -1,0 +1,39 @@
+{
+  "button": [
+    {
+      "name": "晶云平台",
+      "type": "view",
+      "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx6b30be0bc9149832&redirect_uri=http%3A%2F%2Fwww.gene.ac%2F&response_type=code&scope=snsapi_base&state=dashboard#wechat_redirect"
+    },
+    {
+      "name": "管理资源",
+      "sub_button": [
+        {
+          "name": "我的样本",
+          "type": "view",
+          "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx6b30be0bc9149832&redirect_uri=http%3A%2F%2Fwww.gene.ac%2F&response_type=code&scope=snsapi_base&state=minesample#wechat_redirect"
+        },
+        {
+          "name": "我的项目",
+          "type": "view",
+          "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx6b30be0bc9149832&redirect_uri=http%3A%2F%2Fwww.gene.ac%2F&response_type=code&scope=snsapi_base&state=mineproject#wechat_redirect"
+        },
+        {
+          "name": "公共样本",
+          "type": "view",
+          "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx6b30be0bc9149832&redirect_uri=http%3A%2F%2Fwww.gene.ac%2F&response_type=code&scope=snsapi_base&state=publicsample#wechat_redirect"
+        },
+        {
+          "name": "公共项目",
+          "type": "view",
+          "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx6b30be0bc9149832&redirect_uri=http%3A%2F%2Fwww.gene.ac%2F&response_type=code&scope=snsapi_base&state=publicproject#wechat_redirect"
+        }
+      ]
+    },
+    {
+      "name": "活动",
+      "type": "view",
+      "url": "http://www.gene.ac/activity/"
+    }
+  ]
+}

@@ -8,6 +8,7 @@ __author__ = 'zhouheng'
 
 import sys
 from flask import Flask
+from Tools.Mysql_db import DB
 
 default_encoding = 'utf-8'
 if sys.getdefaultencoding() != default_encoding:
@@ -15,3 +16,9 @@ if sys.getdefaultencoding() != default_encoding:
     sys.setdefaultencoding(default_encoding)
 
 msg_api = Flask(__name__)
+
+
+db = DB()
+db.connect()
+
+import api_express
