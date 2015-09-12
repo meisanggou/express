@@ -30,9 +30,10 @@ class ExpressDB:
             ["listen_no", "int(11)", "NO", "PRI", None, "auto_increment"],
             ["com_code", "varchar(10)", "NO", "", None, ""],
             ["waybill_num", "varchar(20)", "NO", "", None, ""],
+            ["remark", "varchar(10)", "NO", "", None, ""],
             ["update_time", "datetime", "NO", "", None, ""],
             ["query_time", "datetime", "NO", "", None, ""],
-            ["call_email", "varchar(30)", "NO", "", None, ""]
+            ["user", "varchar(30)", "NO", "", None, ""]
         ]
 
     def create_completed_express(self, force=False):
@@ -69,11 +70,11 @@ class ExpressDB:
         self.db.execute(del_sql)
         return True
 
-    def new_listen_record(self, com_code, waybill_num, call_email):
+    def new_listen_record(self, com_code, waybill_num, remark, user):
         now_time = datetime.now().strftime(TIME_FORMAT)
-        insert_sql = "INSERT INTO %s (com_code, waybill_num,update_time,query_time,call_email) " \
-                     "VALUES ('%s','%s','%s','%s','%s');" \
-                     % (self.listen_express, com_code, waybill_num, now_time, now_time, call_email)
+        insert_sql = "INSERT INTO %s (com_code, waybill_num,update_time,query_time,remark,user) " \
+                     "VALUES ('%s','%s','%s','%s','%s', '%s');" \
+                     % (self.listen_express, com_code, waybill_num, now_time, now_time, remark, user)
         self.db.execute(insert_sql)
         return True
 
@@ -101,9 +102,9 @@ class ExpressDB:
         while True:
             # 睡眠5分钟
             print("Sleep 5 Minutes")
-            sleep(30)
+            sleep(300)
             # 最后最晚查询过的一条记录
-            select_sql = "SELECT com_code,waybill_num,MIN(query_time),update_time,call_email FROM listen_express;"
+            select_sql = "SELECT com_code,waybill_num,MIN(query_time),update_time,user,remark FROM listen_express;"
             self.db.execute(select_sql)
             record = self.db.fetchone()
             if record[0] is None:
@@ -112,7 +113,7 @@ class ExpressDB:
             com_code = record[0]
             waybill_num = record[1]
             update_time = record[3]
-            call_email = record[4]
+            user = record[4]
             print("Start Handle %s %s" % (com_code, waybill_num))
             # 查询现在快速状态
             query_result = eq.query(com_code, waybill_num)

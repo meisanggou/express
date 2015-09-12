@@ -1,25 +1,20 @@
 #! /usr/bin/env python
 # coding: utf-8
-__author__ = 'ZhouHeng'
 
 import sys
 import datetime
 import requests
 import json
-import string
 import time
 from time import sleep
-import random
-import thread
-import base64
-import socket
-import struct
 import tempfile
 from hashlib import sha1
-from Crypto.Cipher import AES
 import binascii
 from lxml import etree
 from MyEmail import MyEmailManager
+from Tools import query_service_url
+
+__author__ = 'ZhouHeng'
 
 my_email = MyEmailManager()
 
@@ -179,6 +174,9 @@ class WxManager:
     def handle_msg_text(self, xml_msg):
         try:
             content = xml_msg.find("Content").text
+            express_prefix = ("e:", "E:", "e：", "E：")
+            if len(content) > 1 and content[0:2] in express_prefix:
+                content = self.handle_msg_text_express(content)
             from_user = xml_msg.find("FromUserName").text
             to_user = xml_msg.find("ToUserName").text
             create_time = str(int(time.time()))
@@ -188,6 +186,14 @@ class WxManager:
             print(e.args)
             my_email.send_system_exp("handle msg text exp", etree.tostring(xml_msg), str(e.args), 0)
             return ""
+
+    def handle_msg_text_express(self, content):
+        no_prefix = content[2:]
+        response = requests.post(query_service_url + "/explain/", data=json.dumps({"content": no_prefix}))
+        if response.status_code / 100 == 2:
+            if response.json()["status"] == 001:
+                return response.json()["data"]
+        return content
 
     def handle_msg_voice(self, xml_msg):
         try:
@@ -268,9 +274,9 @@ class WxManager:
         try:
             if status not in ("transport", "completed", "exception"):
                 return "fail"
-            temp_status = {"transport": "I2QzxexjVi_n-xHXsCUfR1Npn-jhYArOFbwtErP4QEI",
-                           "completed": "UImG-7U1J-pOTRorC2xuIT2Z94tD7_JepEfzfKWsOZM",
-                           "exception": "TBVC-lrVb-K12gjyYDBjxx6KZbucnwLHp_bfwPg5sn4"}
+            temp_status = {"transport": "6atTNaoeH-Xaqf4Q-tBYInLs_fqR0h1dcNOfAgIfUBc",
+                           "completed": "OFeSZXk6wNQVmX1GJ8P67bXe6FOoEMcMo1s49jIE-Nc",
+                           "exception": "SHun5Ndh8NQDOCkFoi8XM5Lur5TyD1_9LrndC3QN9G0"}
             url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s" % self.get_access_token()
             request_data = {}
             request_data["template_id"] = temp_status[status]
@@ -280,6 +286,7 @@ class WxManager:
             request_data["data"]["user_name"] = {"value": user_name, "color": "#173177"}
             request_data["data"]["com"] = {"value": com, "color": "#000000"}
             request_data["data"]["waybill"] = {"value": waybill, "color": "#173177"}
+            request_data["data"]["remark"] = {"value": waybill, "color": "#173177"}
             request_data["data"]["time1"] = {"value": records[2]["time"], "color": "#000000"}
             request_data["data"]["info1"] = {"value": records[2]["info"], "color": "#173177"}
             request_data["data"]["time2"] = {"value": records[1]["time"], "color": "#000000"}

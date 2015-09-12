@@ -40,8 +40,8 @@ def check_signature():
             return echostr
         return "false"
     except Exception as e:
-        print(e.args)
-        my_email.send_system_exp("check sign exp", "wx", str(e.args) + " " + str(request.args), 0)
+        error_message = "check sign exp: %s url:" % str(e.args)
+        my_email.send_system_exp(request.url, "wx", error_message, 0)
         return "false"
 
 
