@@ -209,7 +209,7 @@ class WxManager:
             event = xml_msg.find("Event").text
             if event == "scancode_waitmsg":
                 return self.handle_msg_event_scan(xml_msg)
-            if event == "click":
+            if event.lower() == "click":
                 return self.handle_msg_event_click(xml_msg)
             else:
                 return self.handle_msg_other(xml_msg)
