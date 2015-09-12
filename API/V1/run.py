@@ -14,4 +14,4 @@ db = DB()
 db.connect()
 
 if __name__ == '__main__':
-    msg_api.run(host="0.0.0.0", port=1523)
+    msg_api.run(host="0.0.0.0", port=1201)
