@@ -34,12 +34,11 @@ def handle_wx_msg():
         signature = request.args["signature"]
         timestamp = request.args["timestamp"]
         nonce = request.args["nonce"]
-        msg_signature = None
         if "encrypt_type" in request.args:
             if request.args["encrypt_type"] == "aes":
                 msg_signature = request.args["msg_signature"]
         request_data = request.data
-        return wx.handle_msg(request_data, signature, timestamp, nonce, msg_signature)
+        return wx.handle_msg(request_data, signature, timestamp, nonce)
     except Exception, e:
         print(e.args)
         error_message = str(e.args)
