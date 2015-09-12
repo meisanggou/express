@@ -1,9 +1,24 @@
 {
   "button": [
     {
-      "name": "晶云平台",
-      "type": "view",
-      "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx6b30be0bc9149832&redirect_uri=http%3A%2F%2Fwww.gene.ac%2F&response_type=code&scope=snsapi_base&state=dashboard#wechat_redirect"
+      "name": "我的快递",
+      "sub_button": [
+        {
+          "type": "click",
+          "name": "监视快递",
+          "key": "listen_express"
+        },
+        {
+          "type": "click",
+          "name": "快递公司",
+          "key": "express_com"
+        },
+        {
+          "type": "click",
+          "name": "我的快递",
+          "key": "my_express"
+        }
+      ]
     },
     {
       "name": "管理资源",

@@ -137,7 +137,7 @@ class WxManager:
         try:
             url = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=%s" % self.get_access_token()
             if menu_json_str == "":
-                read_json = open("../bio_med_tools/wx_menu.json")
+                read_json = open("../Tools/wx_menu.json")
                 btn_str = read_json.read()
                 btn_str = btn_str.decode("gbk").encode("utf8")
             else:
@@ -209,6 +209,8 @@ class WxManager:
             event = xml_msg.find("Event").text
             if event == "scancode_waitmsg":
                 return self.handle_msg_event_scan(xml_msg)
+            if event == "click":
+                return self.handle_msg_event_click(xml_msg)
             else:
                 return self.handle_msg_other(xml_msg)
         except Exception as e:
@@ -224,6 +226,21 @@ class WxManager:
             to_user = xml_msg.find("ToUserName").text
 
             content = u"扫描结果为:" + scan_result
+            create_time = str(int(time.time()))
+            res = {"to_user": from_user, "from_user": to_user, "create_time": create_time, "content": content}
+            return self.text_str_temp % res
+        except Exception as e:
+            print(e.args)
+            my_email.send_system_exp("handle msg event scan exp", etree.tostring(xml_msg), str(e.args), 0)
+            return ""
+
+    def handle_msg_event_click(self, xml_msg):
+        try:
+            key = xml_msg.find("EventKey").text
+            from_user = xml_msg.find("FromUserName").text
+            to_user = xml_msg.find("ToUserName").text
+
+            content = key
             create_time = str(int(time.time()))
             res = {"to_user": from_user, "from_user": to_user, "create_time": create_time, "content": content}
             return self.text_str_temp % res
