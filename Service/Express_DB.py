@@ -1,6 +1,7 @@
 # encoding: utf-8
 # !/usr/bin/python
-
+import sys
+sys.path.append('..')
 from datetime import datetime
 from time import sleep
 
