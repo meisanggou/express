@@ -60,9 +60,12 @@ def explain_express():
     infos = re.split('[,，]', content)
     if len(infos) < 2:
         return json.dumps({"status": 400})
-    if eb.check_waybill(infos[0], infos[1]) is False:
-        return json.dumps({"status": 400})
-    data = u"您监听%s的快递，运单号：%s" % (infos[0], infos[1])
+    com_code = infos[0]
+    waybill_num = infos[1]
+    check_result, message = eb.check_waybill(com_code, waybill_num)
+    if check_result is False:
+        return json.dumps({"status": 421, "message": message})
+    data = u"您监听%s的快递，运单号：%s。监听密钥：%s" % (com_code, waybill_num, message)
     return json.dumps({"status": 001, "message": "check success", "data": data})
 
 
