@@ -203,7 +203,7 @@ class WxManager:
             return ""
 
     def handle_msg_text_express(self, content, openid):
-        no_prefix = content[2:]
+        no_prefix = content[2:].strip(" ")
         response = requests.post(query_service_url + "/explain/", data=json.dumps({"content": no_prefix, "openid": openid}))
         if response.status_code / 100 == 2:
             result = response.json()

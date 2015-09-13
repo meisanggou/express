@@ -48,6 +48,4 @@ sys.setdefaultencoding('utf-8')
 
 kd100_info = eq.query("zto", "762852300291")
 
-url = "http://m.kuaidi100.com/index_all.html?type=zhongtong&postid=762852300291"
-response = requests.get(url)
-print(response.text)
+eq.query("tiantian", "550184678493")
