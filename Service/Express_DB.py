@@ -130,11 +130,12 @@ class ExpressDB:
         return True
 
     def select_listen_record(self, user):
-        select_sql = "SELECT com_code,waybill_num,remark FROM %s WHERE user='%s';" % (self.listen_express, user)
+        select_sql = "SELECT l.com_code,waybill_num,remark,com_name FROM %s AS l,%s AS c WHERE user='%s' " \
+                     "AND l.com_code=c.com_code;" % (self.listen_express, self.express_com, user)
         result = self.db.execute(select_sql)
         listen_info = []
         for item in self.db.fetchall():
-            listen_info.append({"com_code": item[0], "waybill_num": item[1], "remark": item[2]})
+            listen_info.append({"com_code": item[0], "waybill_num": item[1], "remark": item[2], "com_name": item[3]})
         return listen_info
 
     def new_pre_listen(self, listen_key, com_code, waybill_num, remark, user, query_result):
