@@ -174,10 +174,13 @@ class WxManager:
     def handle_msg_text(self, xml_msg):
         try:
             content = xml_msg.find("Content").text
+            from_user = xml_msg.find("FromUserName").text
             express_prefix = ("e:", "E:", "e：", "E：")
+            express_user_prefix = ("bd:", "bd：")
             if len(content) > 1 and content[0:2] in express_prefix:
                 content = self.handle_msg_text_express(content)
-            from_user = xml_msg.find("FromUserName").text
+            if len(content) > 2 and content[0:3].lower() in express_user_prefix:
+                content = self.handle_msg_text_express_user(content, from_user)
             to_user = xml_msg.find("ToUserName").text
             create_time = str(int(time.time()))
             res = {"to_user": from_user, "from_user": to_user, "create_time": create_time, "content": content}
@@ -193,6 +196,18 @@ class WxManager:
         if response.status_code / 100 == 2:
             if response.json()["status"] == 001:
                 return response.json()["data"]
+        return content
+
+    def handle_msg_text_express_user(self, content, openid):
+        no_prefix = content[3:]
+        response = requests.post(query_service_url + "/bind/", data=json.dumps({"user": no_prefix, "openid": openid}))
+        if response.status_code / 100 == 2:
+            if response.json()["status"] == 001:
+                data = response.json()["data"]
+                if data["old"] is None:
+                    return u"您已成功将用户名%s绑定到您的微信账号" % data["new"]
+                else:
+                    return u"您已成功将原来用户名%s更改为%s" % (data["old"], data["new"])
         return content
 
     def handle_msg_voice(self, xml_msg):

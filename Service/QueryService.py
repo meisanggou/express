@@ -6,6 +6,7 @@ __author__ = 'zhouheng'
 from Express_DB import ExpressDB
 from Express_Query import ExpressQuery
 from Express_Basic import ExpressBasic
+from User_DB import UserDB
 from flask import Flask, request
 import thread
 import json
@@ -17,6 +18,25 @@ msg_service = Flask('__name__')
 @msg_service.route('/ping/', methods=["GET"])
 def ping():
     return "true"
+
+
+@msg_service.route('/bind/', methods=["POST"])
+def bind():
+    request_data = json.loads(request.data)
+    if "user" in request_data and "openid" in request_data:
+        user = request_data["user"]
+        openid = request_data["openid"]
+        search_result = re.search('[^0-9a-zA-Z\u4e00-\u9fa5]', user)
+        if search_result is not None:
+            return json.dumps({"status": 400})
+    else:
+        return json.dumps({"status": 400})
+    old_user = uDB.select_express_user(openid)
+    if old_user is None:
+        uDB.new_express_user(user, openid)
+    else:
+        uDB.update_express_user(user, openid)
+    return json.dumps({"status": 001, "message": "bind success", "data": {"old": old_user, "new": user}})
 
 
 @msg_service.route('/explain/', methods=["POST"])
@@ -49,6 +69,7 @@ if __name__ == '__main__':
     eDB = ExpressDB()
     eq = ExpressQuery()
     eb = ExpressBasic()
+    uDB = UserDB()
     result = eDB.check_completed_express()
     if result is False:
         eDB.create_completed_express(True)
@@ -58,6 +79,9 @@ if __name__ == '__main__':
     result = eDB.check_transport_express()
     if result is False:
         eDB.create_transport_express(True)
+    result = uDB.check_express_user()
+    if result is False:
+        uDB.create_express_user(True)
     # kd100_info = eq.kd100("yuantong", "200246227212")
     # eDB.new_express_record("yuantong", "200246227212", kd100_info["express_info"], False)
     # eDB.new_listen_record("sto", "229255098587", "zhou5315938@163.com")
