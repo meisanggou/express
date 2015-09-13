@@ -31,7 +31,8 @@ class ExpressDB:
             ["com_code", "varchar(10)", "NO", "", None, ""],
             ["waybill_num", "varchar(20)", "NO", "", None, ""],
             ["sign_time", "datetime", "NO", "", None, ""],
-            ["sign_info", "varchar(150)", "NO", "", None, ""]
+            ["sign_info", "varchar(150)", "NO", "", None, ""],
+            ["user", "varchar(30)", "NO", "", None, ""]
         ]
         self.listen_express_desc = [
             ["listen_no", "int(11)", "NO", "PRI", None, "auto_increment"],
@@ -127,6 +128,14 @@ class ExpressDB:
         del_sql = "DELETE FROM %s WHERE com_code='%s' AND waybill_num='%s';" % (self.listen_express, com_code, waybill_num)
         self.db.execute(del_sql)
         return True
+
+    def select_listen_record(self, user):
+        select_sql = "SELECT com_code,waybill_num,remark FROM %s WHERE user='%s';" % (self.listen_express, user)
+        result = self.db.execute(select_sql)
+        listen_info = []
+        for item in self.db.fetchall():
+            listen_info.append({"com_code": item[0], "waybill_num": item[1], "remark": item[2]})
+        return listen_info
 
     def new_pre_listen(self, listen_key, com_code, waybill_num, remark, user, query_result):
         try:

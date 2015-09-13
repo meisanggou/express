@@ -44,7 +44,7 @@ class WxManager:
         self.invalid_listen_key = u"无效的监听密钥"
         self.start_listen = u"已经开始监听您的快递%s %s"
         self.listen_info = u"欢迎您使用我们的应用监听快递信息\n首先你先点击我的快递，再点击快递公司查看我们" \
-                           u"支持的快递\n如果我们已经支持您要监听的快递，" \
+                           u"支持的快递公司\n如果我们已经支持您要监听的快递公司，" \
                            u"回复快递+空格+快递公司名称+空格+运单号+空格+运单备注（例如：快递 申通快递 229255098587）即可监听"
 
     # 基础
@@ -324,6 +324,20 @@ class WxManager:
                     content = response.status_code
             elif key == "listen_express":
                 content = self.listen_info
+            elif key == "my_express":
+                response = requests.get(query_service_url + "/mine/", data=json.dumps({"openid": from_user}))
+                if response.status_code / 100 == 2:
+                    if response.json()["status"] == 001:
+                        listen_info = response.json()["data"]
+                        content = u"欢迎您使用我们的应用监听快递信息\n您监听的快递有：\n"
+                        for li in listen_info:
+                            content += "快递公司：%s 运单号：%s 运单备注：%s" % (li["com_code"], li["waybill_num"], li["remark"])
+                    elif response.json()["status"] == 410:
+                        content = self.bind_remind
+                    else:
+                        content = response.text
+                else:
+                    content = response.status_code
             create_time = str(int(time.time()))
             res = {"to_user": from_user, "from_user": to_user, "create_time": create_time, "content": content}
             return self.text_str_temp % res

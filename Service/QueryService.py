@@ -109,6 +109,17 @@ def get_com():
     return json.dumps({"status": 001, "message": "get success", "data": com_info})
 
 
+@msg_service.route('/mine/', methods=["GET"])
+def mine_express():
+    request_data = json.loads(request.data)
+    openid = request_data["openid"]
+    user = uDB.select_user(openid)
+    if user is None:
+        return json.dumps({"status": 410})
+    listen_info = eDB.select_listen_record(user)
+    return json.dumps({"status": 001, "message": "get success", "data": listen_info})
+
+
 if __name__ == '__main__':
     eDB = ExpressDB()
     eq = ExpressQuery()
