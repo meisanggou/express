@@ -29,14 +29,19 @@ def bind():
         search_result = re.search('[^0-9a-zA-Z\u4e00-\u9fa5]', user)
         if search_result is not None:
             return json.dumps({"status": 400})
-        if len(user) <=0 or len(user) > 15:
+        if len(user) <= 0 or len(user) > 15:
             return json.dumps({"status": 400})
+    elif "openid" in request_data:
+        user = uDB.select_express_user(request_data["openid"])
+        return json.dumps({"status": 001, "message": "query success", "data": user})
     else:
         return json.dumps({"status": 400})
     old_user = uDB.select_express_user(openid)
     if old_user is None:
         uDB.new_express_user(user, openid)
     else:
+        if old_user == user:
+            return json.dumps({"status": 412})
         uDB.update_express_user(user, openid)
     return json.dumps({"status": 001, "message": "bind success", "data": {"old": old_user, "new": user}})
 
@@ -45,6 +50,9 @@ def bind():
 def explain_express():
     request_data = json.loads(request.data)
     content = request_data["content"]
+    openid = request_data["openid"]
+    if uDB.select_express_user(openid) is None:
+        return json.dumps({"status": 410})
     infos = re.split('[,，]', content)
     if len(infos) < 2:
         return json.dumps({"status": 400})

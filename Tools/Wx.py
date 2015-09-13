@@ -33,6 +33,9 @@ class WxManager:
         self.text_str_temp = """<xml><ToUserName><![CDATA[%(to_user)s]]></ToUserName><FromUserName>
         <![CDATA[%(from_user)s]]></FromUserName><CreateTime><![CDATA[%(create_time)s]]></CreateTime>
         <MsgType>text</MsgType><Content><![CDATA[%(content)s]]></Content></xml>"""
+        self.bind_remind = u"您的微信账号还没绑定用户名。请回复bd:用户名进行绑定，用户名可以是数字，" \
+                           u"汉字或者字母，用户名长度不可低于1个字符不可超过15个字。例如bd:meisanggou"
+        self.bind_repeat = u"您的微信账号已经绑定%s，无需重复绑定"
 
     # 基础
     def get_token_file(self):
@@ -178,7 +181,7 @@ class WxManager:
             express_prefix = ("e:", "E:", "e：", "E：")
             express_user_prefix = ("bd:", "bd：")
             if len(content) > 1 and content[0:2] in express_prefix:
-                content = self.handle_msg_text_express(content)
+                content = self.handle_msg_text_express(content, from_user)
             if len(content) > 2 and content[0:3].lower() in express_user_prefix:
                 content = self.handle_msg_text_express_user(content, from_user)
             to_user = xml_msg.find("ToUserName").text
@@ -190,12 +193,16 @@ class WxManager:
             my_email.send_system_exp("handle msg text exp", etree.tostring(xml_msg), str(e.args), 0)
             return ""
 
-    def handle_msg_text_express(self, content):
+    def handle_msg_text_express(self, content, openid):
         no_prefix = content[2:]
-        response = requests.post(query_service_url + "/explain/", data=json.dumps({"content": no_prefix}))
+        response = requests.post(query_service_url + "/explain/", data=json.dumps({"content": no_prefix, "openid": openid}))
         if response.status_code / 100 == 2:
             if response.json()["status"] == 001:
                 return response.json()["data"]
+            elif response.json()["status"] == 410:
+                return self.bind_remind
+            elif response.json()["status"] == 412:
+                return self.bind_repeat % content
         return content
 
     def handle_msg_text_express_user(self, content, openid):
