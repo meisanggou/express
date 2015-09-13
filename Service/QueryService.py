@@ -61,7 +61,16 @@ def explain_express():
     infos = re.split('[,，]', content)
     if len(infos) < 2:
         return json.dumps({"status": 400})
-    com_code = infos[0]
+    com = infos[0]
+    if len(com) <= 0:
+        return json.dumps({"status": 421, "message": u"快递公司不明确"})
+    # 查询快递是否存在
+    com_info = eDB.select_com(com)
+    if len(com_info) == 0:
+        return json.dumps({"status": 421, "message": u"快递公司不支持"})
+    if len(com_info) > 1:
+        return json.dumps({"status": 421, "message": u"快递公司不明确"})
+    com_code = com_info[0]["com_code"]
     waybill_num = infos[1]
     check_result, message, query_result = eb.check_waybill(com_code, waybill_num)
     if check_result is False:
@@ -110,8 +119,8 @@ if __name__ == '__main__':
     result = uDB.check_express_user()
     if result is False:
         uDB.create_express_user(True)
-    # kd100_info = eq.kd100("yuantong", "200246227212")
-    # eDB.new_express_record("yuantong", "200246227212", kd100_info["express_info"], False)
-    # eDB.new_listen_record("sto", "229255098587", "zhou5315938@163.com")
+    result = eDB.check_express_com()
+    if result is False:
+        eDB.create_express_com(True)
     thread.start_new_thread(eDB.loop_query, ())
     msg_service.run(host="0.0.0.0", port=1191)

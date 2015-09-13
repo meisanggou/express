@@ -25,6 +25,7 @@ class ExpressDB:
         self.transport_express = "transport_express"
         self.listen_express = "listen_express"
         self.pre_listen = "pre_listen"
+        self.express_com = "express_com"
         self.completed_express_desc = self.transport_express_desc = [
             ["recode_no", "int(11)", "NO", "PRI", None, "auto_increment"],
             ["com_code", "varchar(10)", "NO", "", None, ""],
@@ -50,6 +51,10 @@ class ExpressDB:
             ["query_result", "varchar(1000)", "NO", "", None, ""],
             ["user", "varchar(30)", "NO", "", None, ""]
         ]
+        self.express_com_desc = [
+            ["com_code", "varchar(30)", "NO", "PRI", None, ""],
+            ["com_name", "varchar(20)", "NO", "", None, ""]
+        ]
 
     def create_completed_express(self, force=False):
         return self.db.create_table(self.completed_express, self.completed_express_desc, force)
@@ -74,6 +79,12 @@ class ExpressDB:
 
     def check_pre_listen(self):
         return self.db.check_table(self.pre_listen, self.pre_listen_desc)
+
+    def create_express_com(self, force=False):
+        return self.db.create_table(self.express_com, self.express_com_desc, force)
+
+    def check_express_com(self):
+        return self.db.check_table(self.express_com, self.express_com_desc)
 
     def new_express_record(self, com_code, waybill_num, recodes, completed=False):
         if len(recodes) <= 0:
@@ -144,6 +155,16 @@ class ExpressDB:
         if result <= 0:
             return False
         return True
+
+    def select_com(self, com):
+        com = self.db.format_string(com)
+        select_sql = "SELECT com_name,com_code FROM express_com WHERE com_name LIKE '%%%s%%' " \
+                     "OR com_code LIKE '%%%s%%';" % com
+        self.db.execute(select_sql)
+        com_info = []
+        for item in self.db.fetchall():
+            com_info.append({"com_name": item[0], "com_code": item[1]})
+        return com_info
 
     def send_wx(self, user_name, openid, status, com, waybill, remark, records):
         part_records = []

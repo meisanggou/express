@@ -46,6 +46,6 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-kd100_info = eq.query("zto", "762852300291")
+kd100_info = eq.query("yuantong", "229255098587")
+print(kd100_info)
 
-eq.query("tiantian", "550184678493")
