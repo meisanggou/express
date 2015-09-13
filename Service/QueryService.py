@@ -58,7 +58,7 @@ def explain_express():
     user = uDB.select_user(openid)
     if user is None:
         return json.dumps({"status": 410})
-    infos = re.split('[,，]', content)
+    infos = content.split(" ")
     if len(infos) < 2:
         return json.dumps({"status": 400})
     com = infos[0]
@@ -75,7 +75,10 @@ def explain_express():
     check_result, message, query_result = eb.check_waybill(com_code, waybill_num)
     if check_result is False:
         return json.dumps({"status": 421, "message": message})
-    eDB.new_pre_listen(message, com_code, waybill_num, "", user, json.dumps(query_result))
+    remark = ""
+    if len(infos) >= 3:
+        remark = infos[2]
+    eDB.new_pre_listen(message, com_code, waybill_num, remark, user, json.dumps(query_result))
     data = {"com_code": com_code, "waybill_num": waybill_num, "listen_key": message}
     return json.dumps({"status": 001, "message": "check success", "data": data})
 

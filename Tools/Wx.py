@@ -185,9 +185,8 @@ class WxManager:
         try:
             content = xml_msg.find("Content").text
             from_user = xml_msg.find("FromUserName").text
-            express_prefix = ("e:", "E:", "e：", "E：", u"快递")
             express_user_prefix = ("bd:", "bd：")
-            if len(content) > 1 and content[0:2] in express_prefix:
+            if len(content) > 2 and content[0:3] == u"快递 ":
                 content = self.handle_msg_text_express(content, from_user)
             elif len(content) > 2 and content[0:3].lower() in express_user_prefix:
                 content = self.handle_msg_text_express_user(content, from_user)
