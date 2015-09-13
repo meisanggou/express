@@ -14,19 +14,6 @@ eDB = ExpressDB()
 wx = WxManager()
 
 
-def yto(waybillNo):
-    """
-    圆通速递
-    :return:
-    """
-    url = "http://trace.yto.net.cn:8022/TraceSimple.aspx"
-    data = "waybillNo=%s&validateCode=" % waybillNo
-    print(data)
-    heads = {"Content-Type": "application/x-www-form-urlencoded"}
-    response = requests.post(url, data=data, headers=heads)
-    # print(requests)
-    print(response.text)
-    return "true"
 # yto_info = yto("200246227212")
 # print(yto_info)
 
@@ -42,10 +29,5 @@ def yto(waybillNo):
 # for zi in zto_info["express_info"]:
 #     print(zi["time"])
 #     print(zi["info"])
-import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
-
-kd100_info = eq.query("yuantong", "229255098587")
-print(kd100_info)
-
+response = requests.post("http://127.0.0.1:1191/explain/", data=json.dumps({"content": "sh'entong,229255098587", "openid": "oFBQiwq5QlIBtUTsr2tuMIFnSORs"}))
+print(response.text)

@@ -66,6 +66,7 @@ def explain_express():
         return json.dumps({"status": 421, "message": u"快递公司不明确"})
     # 查询快递是否存在
     com_info = eDB.select_com(com)
+    print(com_info)
     if len(com_info) == 0:
         return json.dumps({"status": 421, "message": u"快递公司不支持"})
     if len(com_info) > 1:

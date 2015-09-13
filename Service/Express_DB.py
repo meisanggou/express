@@ -159,7 +159,8 @@ class ExpressDB:
     def select_com(self, com):
         com = self.db.format_string(com)
         select_sql = "SELECT com_name,com_code FROM express_com WHERE com_name LIKE '%%%s%%' " \
-                     "OR com_code LIKE '%%%s%%';" % com
+                     "OR com_code LIKE '%%%s%%';" % (com, com)
+        print(select_sql)
         self.db.execute(select_sql)
         com_info = []
         for item in self.db.fetchall():
