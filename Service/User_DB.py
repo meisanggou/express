@@ -14,7 +14,7 @@ class UserDB:
         self.db.connect()
         self.user = "express_user"
         self.user_desc = [
-            ["user", "varchar(10)", "NO", "PRI", None, ""],
+            ["user", "varchar(15)", "NO", "PRI", None, ""],
             ["openid", "char(28)", "NO", "", None, ""]
         ]
 
@@ -39,7 +39,7 @@ class UserDB:
         return True
 
     def select_express_user(self, openid):
-        select_sql = "SELECT user FROM　%s WHERE openid=%s;" % (self.user, openid)
+        select_sql = "SELECT user FROM %s WHERE openid='%s';" % (self.user, openid)
         result = self.db.execute(select_sql)
         if result <= 0:
             return None

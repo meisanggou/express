@@ -39,8 +39,13 @@ def yto(waybillNo):
 #     print(zi["time"])
 #     print(zi["info"])
 
-kd100_info = eq.kd100("yuantong", "200246227212 ")
-print(kd100_info["status_code"])
-for kdi in kd100_info["express_info"]:
-    print(kdi["time"])
-    print(kdi["info"])
+# kd100_info = eq.kd100("yuantong", "200246227212 ")
+# print(kd100_info["status_code"])
+# for kdi in kd100_info["express_info"]:
+#     print(kdi["time"])
+#     print(kdi["info"])
+
+from Service.User_DB import UserDB
+uDB = UserDB()
+uDB.select_express_user("oFBQiwk-vS8Ejit5m8_KhsbD6a7o")
+uDB.update_express_user('meisanggo', "oFBQiwk-vS8Ejit5m8_KhsbD6a7o")
