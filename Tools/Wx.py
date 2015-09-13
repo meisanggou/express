@@ -43,6 +43,9 @@ class WxManager:
                                u"请直接复制本条消息回复，即可开始监听。"
         self.invalid_listen_key = u"无效的监听密钥"
         self.start_listen = u"已经开始监听您的快递%s %s"
+        self.listen_info = u"欢迎您使用我们的应用监听快递信息\n首先你先点击我的快递，再点击快递公司查看我们" \
+                           u"支持的快递\n如果我们已经支持您要监听的快递，" \
+                           u"回复快递+空格+快递公司名称+空格+运单号+空格+运单备注（例如：快递 申通快递 229255098587）即可监听"
 
     # 基础
     def get_token_file(self):
@@ -319,6 +322,8 @@ class WxManager:
                         content = response.text
                 else:
                     content = response.status_code
+            elif key == "listen_express":
+                content = self.listen_info
             create_time = str(int(time.time()))
             res = {"to_user": from_user, "from_user": to_user, "create_time": create_time, "content": content}
             return self.text_str_temp % res
