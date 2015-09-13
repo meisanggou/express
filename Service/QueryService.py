@@ -102,6 +102,13 @@ def add_listen():
     eDB.del_pre_listen(listen_key, user)
     return json.dumps({"status": 001, "message": "listen success", "data": listen_info})
 
+
+@msg_service.route('/com/', methods=["GET"])
+def get_com():
+    com_info = eDB.select_com("")
+    return json.dumps({"status": 001, "message": "get success", "data": com_info})
+
+
 if __name__ == '__main__':
     eDB = ExpressDB()
     eq = ExpressQuery()
