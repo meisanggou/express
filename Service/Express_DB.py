@@ -138,6 +138,13 @@ class ExpressDB:
         db_r = self.db.fetchone()
         return {"com_code": db_r[0], "waybill_num": db_r[1], "remark": db_r[2], "query_result": db_r[3]}
 
+    def del_pre_listen(self, listen_key, user):
+        select_sql = "DELETE FROM %s WHERE listen_key='%s' AND user='%s';" % (self.pre_listen, listen_key, user)
+        result = self.db.execute(select_sql)
+        if result <= 0:
+            return False
+        return True
+
     def send_wx(self, user_name, openid, status, com, waybill, remark, records):
         part_records = []
         len_info = len(records)

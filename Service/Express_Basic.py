@@ -10,7 +10,7 @@ __author__ = 'zhouheng'
 class ExpressBasic:
 
     def __init__(self):
-        self.express_com = {"sto": "申通快递", "zto": "中通快递"}
+        self.express_com = {"sto": "申通快递", "zto": "中通快递", "tiantian": "天天快递"}
         self.eq = ExpressQuery()
 
     def check_waybill(self, com, waybill):

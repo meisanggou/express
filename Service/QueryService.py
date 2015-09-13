@@ -87,6 +87,7 @@ def add_listen():
     eDB.new_express_record(listen_info["com_code"], listen_info["waybill_num"], recodes)
     # 添加到监听列表中
     eDB.new_listen_record(listen_info["com_code"], listen_info["waybill_num"], listen_info["remark"], user)
+    eDB.del_pre_listen(listen_key, user)
     return json.dumps({"status": 001, "message": "listen success", "data": listen_info})
 
 if __name__ == '__main__':
