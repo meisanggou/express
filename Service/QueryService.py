@@ -38,6 +38,8 @@ def bind():
         return json.dumps({"status": 400})
     old_user = uDB.select_user(openid)
     if old_user is None:
+        if uDB.select_openid(user) is not None:
+            return json.dumps({"status": 411})
         uDB.new_express_user(user, openid)
     else:
         if old_user == user:

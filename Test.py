@@ -46,6 +46,5 @@ def yto(waybillNo):
 #     print(kdi["info"])
 
 from Service.User_DB import UserDB
-uDB = UserDB()
-uDB.select_express_user("oFBQiwk-vS8Ejit5m8_KhsbD6a7o")
-uDB.update_express_user('meisanggo', "oFBQiwk-vS8Ejit5m8_KhsbD6a7o")
+response = requests.post("http://localhost:1191/bind/", data=json.dumps({"user": "meisanggou", "openid": "oFBQiwq5QlIBtUTsr2tuMIFnSORs"}))
+print(response.text)
