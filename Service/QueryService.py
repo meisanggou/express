@@ -67,22 +67,23 @@ def explain_express():
     if check_result is False:
         return json.dumps({"status": 421, "message": message})
     eDB.new_pre_listen(message, com_code, waybill_num, "", user, json.dumps(query_result))
-    data = u"您监听%s的快递，运单号：%s。监听密钥：%s" % (com_code, waybill_num, message)
+    data = {"com_code": com_code, "waybill_num": waybill_num, "listen_key": message}
     return json.dumps({"status": 001, "message": "check success", "data": data})
 
 
 @msg_service.route('/add/', methods=["POST"])
 def add_listen():
     request_data = json.loads(request.data)
-    com_code = request_data["com_code"]
-    waybill_num = request_data["waybill"]
-    user = request_data["user"]
-    remark = request_data["remark"]
-    new_result = eDB.new_listen_record(com_code, waybill_num, remark, user)
-    if new_result is True:
-        return json.dumps({"status": 000, "message": "Add Success"})
+    openid = request_data["openid"]
+    listen_key = request_data["listen_key"]
+    user = uDB.select_user(openid)
+    if user is None:
+        return json.dumps({"status": 410})
+    listen_info = eDB.select_pre_listen(listen_key, user)
+    if listen_info is None:
+        return json.dumps({"status": 422})
     else:
-        return json.dumps({"status": 500, "message": "Internal error"})
+        return json.dumps({"status": 001, "message": "listen success", "data": listen_info})
 
 if __name__ == '__main__':
     eDB = ExpressDB()

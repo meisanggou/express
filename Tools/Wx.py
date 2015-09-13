@@ -10,6 +10,7 @@ from time import sleep
 import tempfile
 from hashlib import sha1
 import binascii
+import re
 from lxml import etree
 from MyEmail import MyEmailManager
 from Tools import query_service_url
@@ -38,6 +39,10 @@ class WxManager:
         self.bind_repeat = u"您的微信账号已经绑定%s，无需重复绑定"
         self.bind_used = u"您想绑定的用户名%s已经被绑定，请更换用户名重试"
         self.waybill_error = u"您想监听的运单 %s 不能监听"
+        self.explain_success = u"***恭喜您*** 您提供的%s公司运单号为%s快递可以监听,监听密钥：%s。" \
+                               u"请直接复制本条消息回复，即可开始监听。"
+        self.invalid_listen_key = u"无效的监听密钥"
+        self.start_listen = u"已经开始监听您的快递%s %s"
 
     # 基础
     def get_token_file(self):
@@ -184,8 +189,10 @@ class WxManager:
             express_user_prefix = ("bd:", "bd：")
             if len(content) > 1 and content[0:2] in express_prefix:
                 content = self.handle_msg_text_express(content, from_user)
-            if len(content) > 2 and content[0:3].lower() in express_user_prefix:
+            elif len(content) > 2 and content[0:3].lower() in express_user_prefix:
                 content = self.handle_msg_text_express_user(content, from_user)
+            elif len(content) > 2 and content[0:3] == "***":
+                content = self.handle_msg_text_add_listen(content, from_user)
             to_user = xml_msg.find("ToUserName").text
             create_time = str(int(time.time()))
             res = {"to_user": from_user, "from_user": to_user, "create_time": create_time, "content": content}
@@ -199,12 +206,13 @@ class WxManager:
         no_prefix = content[2:]
         response = requests.post(query_service_url + "/explain/", data=json.dumps({"content": no_prefix, "openid": openid}))
         if response.status_code / 100 == 2:
-            if response.json()["status"] == 001:
-                return response.json()["data"]
-            elif response.json()["status"] == 410:
+            result = response.json()
+            if result["status"] == 001:
+                return self.explain_success % (result["data"]["com_code"], result["data"]["waybill_num"], result["data"]["listen_key"])
+            elif result["status"] == 410:
                 return self.bind_remind
-            elif response.json()["status"] == 421:
-                return self.waybill_error % response.json()["message"]
+            elif result["status"] == 421:
+                return self.waybill_error % result["message"]
         return content
 
     def handle_msg_text_express_user(self, content, openid):
@@ -221,6 +229,26 @@ class WxManager:
                 return self.bind_repeat % no_prefix
             elif response.json()["status"] == 411:
                 return self.bind_used % no_prefix
+            else:
+                return response.text
+        else:
+            return response.status_code
+        return content
+
+    def handle_msg_text_add_listen(self, content, openid):
+        regex = self.explain_success[10:] % ("[a-z]+", "[0-9]{10,12}", "([a-z0-9]{32})")
+        keys = re.findall(regex, content)
+        if len(keys) != 1:
+            return content
+        response = requests.post(query_service_url + "/add/", data=json.dumps({"listen_key": keys[0], "openid": openid}))
+        if response.status_code / 100 == 2:
+            if response.json()["status"] == 001:
+                listen_key = response.json()["data"]
+                return self.start_listen % (listen_key["com_code"], listen_key["waybill_num"])
+            elif response.json()["status"] == 410:
+                return self.bind_remind
+            elif response.json()["status"] == 422:
+                return self.invalid_listen_key
             else:
                 return response.text
         else:
