@@ -37,7 +37,7 @@ class ExpressQuery:
         express_info = []
         for tr in record_tr:
             record_td = re.findall('<td width="[27]5%">([ \S]*?)<\/td>', tr)
-            time = record_td[0]
+            time = record_td[0].replace("/", "-")
             temp_info = record_td[1]
             info = "".join(re.split('</?a[ \S]*?>', temp_info))
             express_info.append({"time": time, "info": info})

@@ -181,17 +181,22 @@ class ExpressDB:
                 # 将全部记录记入completed_express
                 self.new_express_record(com_code, waybill_num, query_result["express_info"], True)
                 continue
+            express_info = query_result["express_info"]
+            if len(express_info) <= 0:
+                continue
             # 查询数据库中已有记录进行比对
-            select_sql = "SELECT COUNT(com_code) FROM transport_express WHERE com_code='%s' AND waybill_num='%s';" % (com_code, waybill_num)
-            self.db.execute(select_sql)
-            recode_num = self.db.fetchone()[0]
-            if recode_num == len(query_result["express_info"]):
+            select_sql = "SELECT MAX(sign_time) FROM transport_express WHERE com_code='%s' AND waybill_num='%s';" % (com_code, waybill_num)
+            result = self.db.execute(select_sql)
+            max_sign_time = None
+            if result > 0:
+                max_sign_time = self.db.fetchone()[0]
+            if max_sign_time is not None and max_sign_time >= datetime.strptime(express_info[-1]["time"], TIME_FORMAT):
                 # 没有更新的快递信息
                 # 判断是否超过5天没有更新记录
                 if (datetime.now() - update_time).days >= 5:
                     print("Long time no info")
                     # 通知用户
-                    self.send_wx(user, openid, "exception", com_code, waybill_num, remark, query_result["express_info"])
+                    self.send_wx(user, openid, "exception", com_code, waybill_num, remark, express_info)
                     # 删除transport_express中对应的记录
                     self.del_express_record(com_code, waybill_num)
                     # 删除listen_express中对应的记录
@@ -202,11 +207,12 @@ class ExpressDB:
             else:
                 print("%s %s has new info." % (com_code, waybill_num))
                 # 通知用户
-                self.send_wx(user, openid, "transport", com_code, waybill_num, remark, query_result["express_info"])
+                self.send_wx(user, openid, "transport", com_code, waybill_num, remark, express_info)
                 # 添加运输记录
                 add_record = []
-                for index in range(recode_num, len(query_result["express_info"])):
-                    add_record.append(query_result["express_info"][index])
+                for record in express_info:
+                    if max_sign_time < datetime.strptime(record["time"], TIME_FORMAT):
+                        add_record.append(record)
                 self.new_express_record(com_code, waybill_num, add_record, False)
                 # 更新update_time query_time
                 self.update_listen_record(com_code, waybill_num, True, True)

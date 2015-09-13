@@ -46,7 +46,7 @@ class UserDB:
         return self.db.fetchone()[0]
 
     def select_openid(self, user):
-        select_sql = "SELECT user FROM %s WHERE user='%s';" % (self.user, user)
+        select_sql = "SELECT openid FROM %s WHERE user='%s';" % (self.user, user)
         result = self.db.execute(select_sql)
         if result <= 0:
             return None
