@@ -26,7 +26,7 @@ class ExpressDB:
             ["com_code", "varchar(10)", "NO", "", None, ""],
             ["waybill_num", "varchar(20)", "NO", "", None, ""],
             ["sign_time", "datetime", "NO", "", None, ""],
-            ["sign_info", "varchar(50)", "NO", "", None, ""]
+            ["sign_info", "varchar(150)", "NO", "", None, ""]
         ]
         self.listen_express_desc = [
             ["listen_no", "int(11)", "NO", "PRI", None, "auto_increment"],
