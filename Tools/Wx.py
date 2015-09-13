@@ -331,7 +331,7 @@ class WxManager:
                         listen_info = response.json()["data"]
                         content = u"欢迎您使用我们的应用监听快递信息\n您监听的快递有：\n"
                         for li in listen_info:
-                            content += "快递公司：%s 运单号：%s 运单备注：%s\n" % (li["com_code"], li["waybill_num"], li["remark"])
+                            content += "快递公司：%s 运单号：%s 运单备注：%s\n" % (li["com_name"], li["waybill_num"], li["remark"])
                     elif response.json()["status"] == 410:
                         content = self.bind_remind
                     else:
