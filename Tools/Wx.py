@@ -330,7 +330,7 @@ class WxManager:
             return ""
 
     # 发送消息
-    def send_express_template(self, user_name, openid, status, com, waybill, records):
+    def send_express_template(self, user_name, openid, status, com, waybill, remark, records):
         try:
             if status not in ("transport", "completed", "exception"):
                 return "fail"
@@ -346,7 +346,7 @@ class WxManager:
             request_data["data"]["user_name"] = {"value": user_name, "color": "#173177"}
             request_data["data"]["com"] = {"value": com, "color": "#000000"}
             request_data["data"]["waybill"] = {"value": waybill, "color": "#173177"}
-            request_data["data"]["remark"] = {"value": waybill, "color": "#173177"}
+            request_data["data"]["remark"] = {"value": remark, "color": "#173177"}
             request_data["data"]["time1"] = {"value": records[2]["time"], "color": "#000000"}
             request_data["data"]["info1"] = {"value": records[2]["info"], "color": "#173177"}
             request_data["data"]["time2"] = {"value": records[1]["time"], "color": "#000000"}

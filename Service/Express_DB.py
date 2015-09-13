@@ -8,6 +8,8 @@ from time import sleep
 from Tools.Mysql_db import DB
 from Service import TIME_FORMAT
 from Express_Query import ExpressQuery
+from Tools.Wx import WxManager
+from User_DB import UserDB
 
 __author__ = 'zhouheng'
 
@@ -17,6 +19,8 @@ class ExpressDB:
     def __init__(self):
         self.db = DB()
         self.db.connect()
+        self.wx = WxManager()
+        self.uDB = UserDB()
         self.completed_express = "completed_express"
         self.transport_express = "transport_express"
         self.listen_express = "listen_express"
@@ -105,7 +109,6 @@ class ExpressDB:
         if query is True:
             update_sql += "query_time='%s'," % now_time
         update_sql = update_sql[:-1] + " WHERE com_code='%s' AND waybill_num='%s';" % (com_code, waybill_num)
-        print(update_sql)
         self.db.execute(update_sql)
         return True
 
@@ -135,6 +138,16 @@ class ExpressDB:
         db_r = self.db.fetchone()
         return {"com_code": db_r[0], "waybill_num": db_r[1], "remark": db_r[2], "query_result": db_r[3]}
 
+    def send_wx(self, user_name, openid, status, com, waybill, remark, records):
+        part_records = []
+        len_info = len(records)
+        for index in range(0, 3):
+            if 3 - index > len_info:
+                part_records.append({"time": "", "info": ""})
+                continue
+            part_records.append(records[len_info + index - 3])
+        self.wx.send_express_template(user_name, openid, status, com, waybill, remark, part_records)
+
     def loop_query(self):
         eq = ExpressQuery()
         while True:
@@ -152,12 +165,15 @@ class ExpressDB:
             waybill_num = record[1]
             update_time = record[3]
             user = record[4]
+            remark = record[5]
+            openid = self.uDB.select_openid(user)
             print("Start Handle %s %s" % (com_code, waybill_num))
             # 查询现在快速状态
             query_result = eq.query(com_code, waybill_num)
             if query_result["completed"] is True:
                 print("%s %s completed" % (com_code, waybill_num))
                 # 通知用户完成
+                self.send_wx(user, openid, "completed", com_code, waybill_num, remark, query_result["express_info"])
                 # 删除transport_express中对应的记录
                 self.del_express_record(com_code, waybill_num)
                 # 删除listen_express中对应的记录
@@ -175,6 +191,7 @@ class ExpressDB:
                 if (datetime.now() - update_time).days >= 5:
                     print("Long time no info")
                     # 通知用户
+                    self.send_wx(user, openid, "exception", com_code, waybill_num, remark, query_result["express_info"])
                     # 删除transport_express中对应的记录
                     self.del_express_record(com_code, waybill_num)
                     # 删除listen_express中对应的记录
@@ -185,7 +202,7 @@ class ExpressDB:
             else:
                 print("%s %s has new info." % (com_code, waybill_num))
                 # 通知用户
-
+                self.send_wx(user, openid, "transport", com_code, waybill_num, remark, query_result["express_info"])
                 # 添加运输记录
                 add_record = []
                 for index in range(recode_num, len(query_result["express_info"])):

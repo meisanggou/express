@@ -4,7 +4,6 @@
 import re
 import uuid
 from Express_Query import ExpressQuery
-from Express_DB import ExpressDB
 __author__ = 'zhouheng'
 
 
@@ -29,3 +28,5 @@ class ExpressBasic:
             return False, u"运单已签收", []
         no = uuid.uuid1().hex
         return True, no, result["express_info"]
+
+

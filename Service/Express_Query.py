@@ -67,7 +67,9 @@ class ExpressQuery:
         else:
             status_code = 2
         express_info = []
-        for li in record_li:
+        len_li = len(record_li)
+        for index in range(len_li):
+            li = record_li[len_li - index - 1]
             recode_div = re.findall('<div[^>]*?>([\s\S]*?)</div>', li)
             temp_info = recode_div[0]
             time = recode_div[1]
