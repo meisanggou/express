@@ -208,6 +208,10 @@ class WxManager:
                     return u"您已成功将用户名%s绑定到您的微信账号" % data["new"]
                 else:
                     return u"您已成功将原来用户名%s更改为%s" % (data["old"], data["new"])
+            else:
+                return response.text
+        else:
+            return response.status_code
         return content
 
     def handle_msg_voice(self, xml_msg):

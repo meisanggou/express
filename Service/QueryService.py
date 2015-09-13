@@ -29,6 +29,8 @@ def bind():
         search_result = re.search('[^0-9a-zA-Z\u4e00-\u9fa5]', user)
         if search_result is not None:
             return json.dumps({"status": 400})
+        if len(user) <=0 or len(user) > 10:
+            return json.dumps({"status": 400})
     else:
         return json.dumps({"status": 400})
     old_user = uDB.select_express_user(openid)
