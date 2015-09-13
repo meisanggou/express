@@ -36,6 +36,7 @@ class WxManager:
         self.bind_remind = u"您的微信账号还没绑定用户名。请回复bd:用户名进行绑定，用户名可以是数字，" \
                            u"汉字或者字母，用户名长度不可低于1个字符不可超过15个字。例如bd:meisanggou"
         self.bind_repeat = u"您的微信账号已经绑定%s，无需重复绑定"
+        self.bind_used = u"您想绑定的用户名%s已经被绑定，请更换用户名重试"
 
     # 基础
     def get_token_file(self):
@@ -214,7 +215,9 @@ class WxManager:
                 else:
                     return u"您已成功将原来用户名%s更改为%s" % (data["old"], data["new"])
             elif response.json()["status"] == 412:
-                return self.bind_repeat % content
+                return self.bind_repeat % no_prefix
+            elif response.json()["status"] == 411:
+                return self.bind_used % no_prefix
             else:
                 return response.text
         else:

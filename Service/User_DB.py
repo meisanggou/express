@@ -38,8 +38,15 @@ class UserDB:
         self.db.execute(update_sql)
         return True
 
-    def select_express_user(self, openid):
+    def select_user(self, openid):
         select_sql = "SELECT user FROM %s WHERE openid='%s';" % (self.user, openid)
+        result = self.db.execute(select_sql)
+        if result <= 0:
+            return None
+        return self.db.fetchone()[0]
+
+    def select_openid(self, user):
+        select_sql = "SELECT user FROM %s WHERE user='%s';" % (self.user, user)
         result = self.db.execute(select_sql)
         if result <= 0:
             return None
