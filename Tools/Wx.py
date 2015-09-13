@@ -201,8 +201,6 @@ class WxManager:
                 return response.json()["data"]
             elif response.json()["status"] == 410:
                 return self.bind_remind
-            elif response.json()["status"] == 412:
-                return self.bind_repeat % content
         return content
 
     def handle_msg_text_express_user(self, content, openid):
@@ -215,6 +213,8 @@ class WxManager:
                     return u"您已成功将用户名%s绑定到您的微信账号" % data["new"]
                 else:
                     return u"您已成功将原来用户名%s更改为%s" % (data["old"], data["new"])
+            elif response.json()["status"] == 412:
+                return self.bind_repeat % content
             else:
                 return response.text
         else:
