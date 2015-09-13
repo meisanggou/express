@@ -55,16 +55,18 @@ def explain_express():
     request_data = json.loads(request.data)
     content = request_data["content"]
     openid = request_data["openid"]
-    if uDB.select_user(openid) is None:
+    user = uDB.select_user(openid)
+    if user is None:
         return json.dumps({"status": 410})
     infos = re.split('[,，]', content)
     if len(infos) < 2:
         return json.dumps({"status": 400})
     com_code = infos[0]
     waybill_num = infos[1]
-    check_result, message = eb.check_waybill(com_code, waybill_num)
+    check_result, message, query_result = eb.check_waybill(com_code, waybill_num)
     if check_result is False:
         return json.dumps({"status": 421, "message": message})
+    eDB.new_pre_listen(message, com_code, waybill_num, "", user, json.dumps(query_result))
     data = u"您监听%s的快递，运单号：%s。监听密钥：%s" % (com_code, waybill_num, message)
     return json.dumps({"status": 001, "message": "check success", "data": data})
 
@@ -96,6 +98,9 @@ if __name__ == '__main__':
     result = eDB.check_transport_express()
     if result is False:
         eDB.create_transport_express(True)
+    result = eDB.check_pre_listen()
+    if result is False:
+        eDB.create_pre_listen(True)
     result = uDB.check_express_user()
     if result is False:
         uDB.create_express_user(True)

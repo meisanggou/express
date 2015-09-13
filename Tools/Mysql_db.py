@@ -117,6 +117,9 @@ class DB(object):
             self.cursor.close()
         self.conn.close()
 
+    def format_string(self, str):
+        return MySQLdb.escape_string(str)
+
     def create_table(self, table_name, table_desc, force=False):
         try:
             show_sql = "SHOW TABLES LIKE '%s';" % table_name

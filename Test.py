@@ -5,9 +5,11 @@ __author__ = 'ZhouHeng'
 import requests
 import re
 from Service.Express_Query import ExpressQuery
+from Service.Express_DB import ExpressDB
 import json
 
 eq = ExpressQuery()
+eDB = ExpressDB()
 
 
 def yto(waybillNo):
@@ -48,3 +50,8 @@ def yto(waybillNo):
 from Service.User_DB import UserDB
 response = requests.post("http://localhost:1191/explain/", data=json.dumps({"content": "zto,12345678901", "openid": "oFBQiwq5QlIBtUTsr2tuMIFnSORs"}))
 print(response.text)
+result = eDB.select_pre_listen("a86864cf59d811e587a5ac72893dafe9", "meisanggou")
+query_result = result["query_result"]
+infos = json.loads(query_result)
+for info in infos:
+    print(info["info"])

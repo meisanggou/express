@@ -20,6 +20,7 @@ class ExpressDB:
         self.completed_express = "completed_express"
         self.transport_express = "transport_express"
         self.listen_express = "listen_express"
+        self.pre_listen = "pre_listen"
         self.completed_express_desc = self.transport_express_desc = [
             ["recode_no", "int(11)", "NO", "PRI", None, "auto_increment"],
             ["com_code", "varchar(10)", "NO", "", None, ""],
@@ -34,6 +35,15 @@ class ExpressDB:
             ["remark", "varchar(10)", "NO", "", None, ""],
             ["update_time", "datetime", "NO", "", None, ""],
             ["query_time", "datetime", "NO", "", None, ""],
+            ["user", "varchar(30)", "NO", "", None, ""]
+        ]
+        self.pre_listen_desc = [
+            ["listen_key", "char(32)", "NO", "PRI", None, ""],
+            ["com_code", "varchar(10)", "NO", "", None, ""],
+            ["waybill_num", "varchar(20)", "NO", "", None, ""],
+            ["remark", "varchar(10)", "NO", "", None, ""],
+            ["insert_time", "datetime", "NO", "", None, ""],
+            ["query_result", "varchar(1000)", "NO", "", None, ""],
             ["user", "varchar(30)", "NO", "", None, ""]
         ]
 
@@ -54,6 +64,12 @@ class ExpressDB:
 
     def check_listen_express(self):
         return self.db.check_table(self.listen_express, self.listen_express_desc)
+
+    def create_pre_listen(self, force=False):
+        return self.db.create_table(self.pre_listen, self.pre_listen_desc, force)
+
+    def check_pre_listen(self):
+        return self.db.check_table(self.pre_listen, self.pre_listen_desc)
 
     def new_express_record(self, com_code, waybill_num, recodes, completed=False):
         if len(recodes) <= 0:
@@ -97,6 +113,27 @@ class ExpressDB:
         del_sql = "DELETE FROM %s WHERE com_code='%s' AND waybill_num='%s';" % (self.listen_express, com_code, waybill_num)
         self.db.execute(del_sql)
         return True
+
+    def new_pre_listen(self, listen_key, com_code, waybill_num, remark, user, query_result):
+        try:
+            now_time = datetime.now().strftime(TIME_FORMAT)
+            query_result = self.db.format_string(query_result)
+            insert_sql = "INSERT INTO %s (listen_key,com_code,waybill_num,insert_time,query_result,remark,user) " \
+                         "VALUES ('%s','%s','%s','%s','%s','%s', '%s');" \
+                         % (self.pre_listen, listen_key, com_code, waybill_num, now_time, query_result, remark, user)
+            self.db.execute(insert_sql)
+            return True
+        except Exception as e:
+            print(e.args)
+
+    def select_pre_listen(self, listen_key, user):
+        select_sql = "SELECT com_code,waybill_num,remark,query_result FROM %s WHERE listen_key='%s' AND user='%s';"\
+                     % (self.pre_listen, listen_key, user)
+        result = self.db.execute(select_sql)
+        if result <= 0:
+            return None
+        db_r = self.db.fetchone()
+        return {"com_code": db_r[0], "waybill_num": db_r[1], "remark": db_r[2], "query_result": db_r[3]}
 
     def loop_query(self):
         eq = ExpressQuery()
