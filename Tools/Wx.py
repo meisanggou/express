@@ -37,6 +37,7 @@ class WxManager:
                            u"汉字或者字母，用户名长度不可低于1个字符不可超过15个字。例如bd:meisanggou"
         self.bind_repeat = u"您的微信账号已经绑定%s，无需重复绑定"
         self.bind_used = u"您想绑定的用户名%s已经被绑定，请更换用户名重试"
+        self.waybill_error = u"您想监听的运单 %s 不能监听"
 
     # 基础
     def get_token_file(self):
@@ -202,6 +203,8 @@ class WxManager:
                 return response.json()["data"]
             elif response.json()["status"] == 410:
                 return self.bind_remind
+            elif response.json()["status"] == 421:
+                return self.waybill_error % response.json()["message"]
         return content
 
     def handle_msg_text_express_user(self, content, openid):
