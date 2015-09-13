@@ -304,24 +304,21 @@ class WxManager:
             key = xml_msg.find("EventKey").text
             from_user = xml_msg.find("FromUserName").text
             to_user = xml_msg.find("ToUserName").text
+            content = key
             if key == "express_com":
                 response = requests.get(query_service_url + "/com/")
                 if response.status_code / 100 == 2:
                     if response.json()["status"] == 001:
                         com_info = response.json()["data"]
-                        com_str = u"欢迎您使用我们的应用监听快递信息\n我们暂时支持的快递公司有：\n"
+                        content = u"欢迎您使用我们的应用监听快递信息\n我们暂时支持的快递公司有：\n"
                         for ci in com_info:
-                            com_str += ci["com_name"] + " "
-                        return com_str
+                            content += ci["com_name"] + " "
                     elif response.json()["status"] == 410:
-                        return self.bind_remind
-                    elif response.json()["status"] == 422:
-                        return self.invalid_listen_key
+                        content = self.bind_remind
                     else:
-                        return response.text
+                        content = response.text
                 else:
-                    return response.status_code
-            content = key
+                    content = response.status_code
             create_time = str(int(time.time()))
             res = {"to_user": from_user, "from_user": to_user, "create_time": create_time, "content": content}
             return self.text_str_temp % res
