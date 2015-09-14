@@ -58,5 +58,5 @@ class UserDB:
         result = self.db.execute(select_sql)
         if result <= 0:
             return None
-        db_r = self.db.fetchone()[0]
+        db_r = self.db.fetchone()
         return {"user_no": db_r[0], "user_name": db_r[1], "openid": db_r[2]}
