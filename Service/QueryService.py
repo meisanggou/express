@@ -78,7 +78,7 @@ def explain_express():
         return json.dumps({"status": 421, "message": message})
     check_result = eDB.check_listen_record(com_code, waybill_num, user_no)
     if check_result is True:
-        return json.dumps({"status": 421, "message": u"您提供的运单号已经在监听了，不能重复监听"})
+        return json.dumps({"status": 421, "message": u"已经在监听"})
     remark = ""
     if len(infos) >= 3:
         remark = infos[2]
