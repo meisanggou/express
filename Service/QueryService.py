@@ -89,18 +89,18 @@ def add_listen():
     request_data = json.loads(request.data)
     openid = request_data["openid"]
     listen_key = request_data["listen_key"]
-    user = uDB.select_user_name(openid)
-    if user is None:
+    user_no = uDB.select_user_no(openid)
+    if user_no is None:
         return json.dumps({"status": 410})
-    listen_info = eDB.select_pre_listen(listen_key, user)
+    listen_info = eDB.select_pre_listen(listen_key, user_no)
     if listen_info is None:
         return json.dumps({"status": 422})
     # 添加到运输记录中
     recodes = json.loads(listen_info["query_result"])
     eDB.new_express_record(listen_info["com_code"], listen_info["waybill_num"], recodes)
     # 添加到监听列表中
-    eDB.new_listen_record(listen_info["com_code"], listen_info["waybill_num"], listen_info["remark"], user)
-    eDB.del_pre_listen(listen_key, user)
+    eDB.new_listen_record(listen_info["com_code"], listen_info["waybill_num"], listen_info["remark"], user_no)
+    eDB.del_pre_listen(listen_key, user_no)
     return json.dumps({"status": 001, "message": "listen success", "data": listen_info})
 
 
