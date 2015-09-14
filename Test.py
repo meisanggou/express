@@ -29,5 +29,5 @@ wx = WxManager()
 # for zi in zto_info["express_info"]:
 #     print(zi["time"])
 #     print(zi["info"])
-response = requests.post("http://127.0.0.1:1191/explain/", data=json.dumps({"content": u"申通,229255098587", "openid": "oFBQiwq5QlIBtUTsr2tuMIFnSORs"}))
+response = requests.get("http://127.0.0.1:1191/mine/", data=json.dumps({"content": u"申通,229255098587", "openid": "oFBQiwq5QlIBtUTsr2tuMIFnSORs"}))
 print(response.text)

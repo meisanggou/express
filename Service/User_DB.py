@@ -14,7 +14,7 @@ class UserDB:
         self.db.connect()
         self.user = "express_user"
         self.user_desc = [
-            ["user_name", "int(11)", "NO", "PRI", None, "auto_increment"],
+            ["user_no", "int(11)", "NO", "PRI", None, "auto_increment"],
             ["user_name", "varchar(15)", "NO", "", None, ""],
             ["openid", "char(28)", "NO", "", None, ""]
         ]
@@ -39,15 +39,22 @@ class UserDB:
         self.db.execute(update_sql)
         return True
 
-    def select_user(self, openid):
+    def select_user_name(self, openid):
         select_sql = "SELECT user_name FROM %s WHERE openid='%s';" % (self.user, openid)
         result = self.db.execute(select_sql)
         if result <= 0:
             return None
         return self.db.fetchone()[0]
 
-    def select_openid(self, user):
-        select_sql = "SELECT openid FROM %s WHERE user_name='%s';" % (self.user, user)
+    def select_user_no(self, openid):
+        select_sql = "SELECT user_no FROM %s WHERE openid='%s';" % (self.user, openid)
+        result = self.db.execute(select_sql)
+        if result <= 0:
+            return None
+        return self.db.fetchone()[0]
+
+    def select_openid(self, user_name):
+        select_sql = "SELECT openid FROM %s WHERE user_name='%s';" % (self.user, user_name)
         result = self.db.execute(select_sql)
         if result <= 0:
             return None

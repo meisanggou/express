@@ -55,8 +55,8 @@ def explain_express():
     request_data = json.loads(request.data)
     content = request_data["content"]
     openid = request_data["openid"]
-    user = uDB.select_user(openid)
-    if user is None:
+    user_no = uDB.select_user_no(openid)
+    if user_no is None:
         return json.dumps({"status": 410})
     infos = content.split(" ")
     if len(infos) < 2:
@@ -78,7 +78,7 @@ def explain_express():
     remark = ""
     if len(infos) >= 3:
         remark = infos[2]
-    eDB.new_pre_listen(message, com_code, waybill_num, remark, user, json.dumps(query_result))
+    eDB.new_pre_listen(message, com_code, waybill_num, remark, user_no, json.dumps(query_result))
     data = {"com_code": com_code, "waybill_num": waybill_num, "listen_key": message}
     return json.dumps({"status": 001, "message": "check success", "data": data})
 
@@ -88,7 +88,7 @@ def add_listen():
     request_data = json.loads(request.data)
     openid = request_data["openid"]
     listen_key = request_data["listen_key"]
-    user = uDB.select_user(openid)
+    user = uDB.select_user_name(openid)
     if user is None:
         return json.dumps({"status": 410})
     listen_info = eDB.select_pre_listen(listen_key, user)
@@ -113,7 +113,9 @@ def get_com():
 def mine_express():
     request_data = json.loads(request.data)
     openid = request_data["openid"]
-    user = uDB.select_user(openid)
+    print(openid)
+    user = uDB.select_user_name(openid)
+    print(user)
     if user is None:
         return json.dumps({"status": 410})
     listen_info = eDB.select_listen_record(user)

@@ -50,7 +50,7 @@ class ExpressDB:
             ["remark", "varchar(10)", "NO", "", None, ""],
             ["insert_time", "datetime", "NO", "", None, ""],
             ["query_result", "varchar(1000)", "NO", "", None, ""],
-            ["user", "varchar(30)", "NO", "", None, ""]
+            ["user_no", "int(11)", "NO", "", None, ""]
         ]
         self.express_com_desc = [
             ["com_code", "varchar(30)", "NO", "PRI", None, ""],
@@ -138,13 +138,13 @@ class ExpressDB:
             listen_info.append({"com_code": item[0], "waybill_num": item[1], "remark": item[2], "com_name": item[3]})
         return listen_info
 
-    def new_pre_listen(self, listen_key, com_code, waybill_num, remark, user, query_result):
+    def new_pre_listen(self, listen_key, com_code, waybill_num, remark, user_no, query_result):
         try:
             now_time = datetime.now().strftime(TIME_FORMAT)
             query_result = self.db.format_string(query_result)
-            insert_sql = "INSERT INTO %s (listen_key,com_code,waybill_num,insert_time,query_result,remark,user) " \
-                         "VALUES ('%s','%s','%s','%s','%s','%s', '%s');" \
-                         % (self.pre_listen, listen_key, com_code, waybill_num, now_time, query_result, remark, user)
+            insert_sql = "INSERT INTO %s (listen_key,com_code,waybill_num,insert_time,query_result,remark,user_no) " \
+                         "VALUES ('%s','%s','%s','%s','%s','%s', %s);" \
+                         % (self.pre_listen, listen_key, com_code, waybill_num, now_time, query_result, remark, user_no)
             self.db.execute(insert_sql)
             return True
         except Exception as e:
