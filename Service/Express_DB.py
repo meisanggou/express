@@ -87,7 +87,7 @@ class ExpressDB:
     def check_express_com(self):
         return self.db.check_table(self.express_com, self.express_com_desc)
 
-    def new_express_record(self, user_no, com_code, waybill_num, recodes, completed=False):
+    def new_express_record(self, com_code, waybill_num, recodes, user_no, completed=False):
         if len(recodes) <= 0:
             return True
         insert_sql = "INSERT INTO %s (com_code,waybill_num,sign_time,sign_info,user_no) VALUES " \
