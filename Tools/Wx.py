@@ -34,8 +34,8 @@ class WxManager:
         self.text_str_temp = """<xml><ToUserName><![CDATA[%(to_user)s]]></ToUserName><FromUserName>
         <![CDATA[%(from_user)s]]></FromUserName><CreateTime><![CDATA[%(create_time)s]]></CreateTime>
         <MsgType>text</MsgType><Content><![CDATA[%(content)s]]></Content></xml>"""
-        self.bind_remind = u"您的微信账号还没绑定用户名。请回复bd:用户名进行绑定，用户名可以是数字，" \
-                           u"汉字或者字母，用户名长度不可低于1个字符不可超过15个字。例如bd:meisanggou"
+        self.bind_remind = u"您的微信账号还没绑定用户名。请回复绑定+空格+用户名进行绑定，用户名可以是数字，" \
+                           u"汉字或者字母，用户名长度不可低于1个字符不可超过15个字。例如绑定 meisanggou"
         self.bind_repeat = u"您的微信账号已经绑定%s，无需重复绑定"
         self.bind_used = u"您想绑定的用户名%s已经被绑定，请更换用户名重试"
         self.waybill_error = u"您想监听的运单 %s 不能监听"
@@ -188,10 +188,9 @@ class WxManager:
         try:
             content = xml_msg.find("Content").text
             from_user = xml_msg.find("FromUserName").text
-            express_user_prefix = ("bd:", "bd：")
             if len(content) > 2 and content[0:3] == u"快递 ":
                 content = self.handle_msg_text_express(content, from_user)
-            elif len(content) > 2 and content[0:3].lower() in express_user_prefix:
+            elif len(content) > 2 and content[0:3] == u"绑定 ":
                 content = self.handle_msg_text_express_user(content, from_user)
             elif len(content) > 2 and content[0:3] == "***":
                 content = self.handle_msg_text_add_listen(content, from_user)
