@@ -26,7 +26,7 @@ def bind():
     if "user" in request_data and "openid" in request_data:
         user = request_data["user"]
         openid = request_data["openid"]
-        search_result = re.search('[^0-9a-zA-Z\u4e00-\u9fa5]', user)
+        search_result = re.search(u'[^0-9a-zA-Z\u4e00-\u9fa5]', user)
         if search_result is not None:
             return json.dumps({"status": 400})
         if len(user) <= 0 or len(user) > 15:
@@ -71,6 +71,7 @@ def explain_express():
     if len(com_info) > 1:
         return json.dumps({"status": 421, "message": u"快递公司不明确"})
     com_code = com_info[0]["com_code"]
+    com_name = com_info[0]["com_name"]
     waybill_num = infos[1]
     check_result, message, query_result = eb.check_waybill(com_code, waybill_num)
     if check_result is False:
@@ -79,7 +80,7 @@ def explain_express():
     if len(infos) >= 3:
         remark = infos[2]
     eDB.new_pre_listen(message, com_code, waybill_num, remark, user_no, json.dumps(query_result))
-    data = {"com_code": com_code, "waybill_num": waybill_num, "listen_key": message, "com_name": com_info[0]["com_name"], "remark": remark}
+    data = {"com_code": com_code, "waybill_num": waybill_num, "listen_key": message, "com_name": com_name, "remark": remark}
     return json.dumps({"status": 001, "message": "check success", "data": data})
 
 
