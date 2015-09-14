@@ -218,7 +218,7 @@ class WxManager:
 
     def handle_msg_text_express_user(self, content, openid):
         no_prefix = content[3:]
-        response = requests.post(query_service_url + "/bind/", data=json.dumps({"user": no_prefix, "openid": openid}))
+        response = requests.post(query_service_url + "/bind/", data=json.dumps({"user_name": no_prefix, "openid": openid}))
         if response.status_code / 100 == 2:
             if response.json()["status"] == 001:
                 data = response.json()["data"]

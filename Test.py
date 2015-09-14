@@ -29,18 +29,7 @@ wx = WxManager()
 # for zi in zto_info["express_info"]:
 #     print(zi["time"])
 #     print(zi["info"])
-# response = requests.post("http://127.0.0.1:1191/explain/", data=json.dumps({"content": u"申通 229357549351 电池", "openid": "oFBQiwq5QlIBtUTsr2tuMIFnSORs"}))
-# print(response.text)
+response = requests.post("http://127.0.0.1:1191/bind/", data=json.dumps({"user_name": u"鹛桑够2", "openid": "oFBQiwq5QlIBtUTsr2tuMIFnSORs"}))
+print(response.text)
 
-explain_success = u"***恭喜您***\n 您提供的%s公司运单号为%s备注为%s的快递可以监听,监听密钥：%s。" \
-                               u"请直接复制本条消息回复，即可开始监听。"
-
-content = explain_success % (u"申通快递", "229357549351", "", "b3bc463c5a8011e5b4ab50af736dfb82")
-print(content)
-regex = explain_success[10:] % (u'[a-zA-Z\u4e00-\u9fa5]+?', "[0-9]{10,12}", "[\s\S]*?", "([a-z0-9]{32})")
-print(regex)
-keys = re.findall(regex, content)
-if len(keys) != 1:
-    print content
-print(keys)
 

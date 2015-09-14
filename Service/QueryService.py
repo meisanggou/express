@@ -23,31 +23,31 @@ def ping():
 @msg_service.route('/bind/', methods=["POST"])
 def bind():
     request_data = json.loads(request.data)
-    if "user" in request_data and "openid" in request_data:
-        user = request_data["user"]
+    if "user_name" in request_data and "openid" in request_data:
+        user_name = request_data["user_name"]
         openid = request_data["openid"]
-        search_result = re.search(u'[^0-9a-zA-Z\u4e00-\u9fa5]', user)
+        search_result = re.search(u'[^0-9a-zA-Z\u4e00-\u9fa5]', user_name)
         if search_result is not None:
             return json.dumps({"status": 400})
-        if len(user) <= 0 or len(user) > 15:
+        if len(user_name) <= 0 or len(user_name) > 15:
             return json.dumps({"status": 400})
     elif "openid" in request_data:
         user = uDB.select_user(request_data["openid"])
         return json.dumps({"status": 001, "message": "query success", "data": user})
     else:
         return json.dumps({"status": 400})
-    old_user = uDB.select_user(openid)
+    old_user = uDB.select_user_name(openid)
     if old_user is None:
-        if uDB.select_openid(user) is not None:
+        if uDB.select_openid(user_name) is not None:
             return json.dumps({"status": 411})
-        uDB.new_express_user(user, openid)
+        uDB.new_express_user(user_name, openid)
     else:
-        if old_user == user:
+        if old_user == user_name:
             return json.dumps({"status": 412})
-        if uDB.select_openid(user) is not None:
+        if uDB.select_openid(user_name) is not None:
             return json.dumps({"status": 411})
-        uDB.update_express_user(user, openid)
-    return json.dumps({"status": 001, "message": "bind success", "data": {"old": old_user, "new": user}})
+        uDB.update_express_user(user_name, openid)
+    return json.dumps({"status": 001, "message": "bind success", "data": {"old": old_user, "new": user_name}})
 
 
 @msg_service.route('/explain/', methods=["POST"])
