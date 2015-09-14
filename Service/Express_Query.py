@@ -41,7 +41,6 @@ class ExpressQuery:
             temp_info = record_td[1]
             info = "".join(re.split('</?a[ \S]*?>', temp_info))
             express_info.append({"time": time, "info": info})
-        completed = True
         sto_info = {"express_info": express_info, "status_code": status_code, "completed": completed}
         return sto_info
 
