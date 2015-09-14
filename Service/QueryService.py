@@ -38,13 +38,13 @@ def bind():
         return json.dumps({"status": 400})
     old_user = uDB.select_user_name(openid)
     if old_user is None:
-        if uDB.select_openid(user_name) is not None:
+        if uDB.select_user(user_name=user_name) is not None:
             return json.dumps({"status": 411})
         uDB.new_express_user(user_name, openid)
     else:
         if old_user == user_name:
             return json.dumps({"status": 412})
-        if uDB.select_openid(user_name) is not None:
+        if uDB.select_user(user_name=user_name) is not None:
             return json.dumps({"status": 411})
         uDB.update_express_user(user_name, openid)
     return json.dumps({"status": 001, "message": "bind success", "data": {"old": old_user, "new": user_name}})
