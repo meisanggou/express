@@ -237,7 +237,7 @@ class WxManager:
         return content
 
     def handle_msg_text_add_listen(self, content, openid):
-        regex = self.explain_success[10:] % (u'[a-zA-Z\u4e00-\u9fa5]+?', "[0-9]{10,12}", "[\s\S]*?", "([a-z0-9]{32})")
+        regex = self.explain_success[10:] % (u'[a-zA-Z\u4e00-\u9fa5]+?', "[0-9]{10,14}", "[\s\S]*?", "([a-z0-9]{32})")
         keys = re.findall(regex, content)
         if len(keys) != 1:
             return content

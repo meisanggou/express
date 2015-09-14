@@ -13,7 +13,7 @@ class ExpressBasic:
         self.eq = ExpressQuery()
 
     def check_waybill(self, com, waybill):
-        if len(waybill) > 12 or len(waybill) < 10:
+        if len(waybill) > 13 or len(waybill) < 10:
             return False, u"运单号不正确", []
         search_result = re.search('[^0-9]', waybill)
         if search_result is not None:

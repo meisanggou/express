@@ -24,7 +24,7 @@ def ping():
 def bind():
     request_data = json.loads(request.data)
     if "user_name" in request_data and "openid" in request_data:
-        user_name = request_data["user_name"]
+        user_name = request_data["user_name"].strip(" ")
         openid = request_data["openid"]
         search_result = re.search(u'[^0-9a-zA-Z\u4e00-\u9fa5]', user_name)
         if search_result is not None:
