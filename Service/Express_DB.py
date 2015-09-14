@@ -32,7 +32,8 @@ class ExpressDB:
             ["waybill_num", "varchar(20)", "NO", "", None, ""],
             ["sign_time", "datetime", "NO", "", None, ""],
             ["sign_info", "varchar(150)", "NO", "", None, ""],
-            ["user_no", "int(11)", "NO", "", None, ""]
+            ["user_no", "int(11)", "NO", "", None, ""],
+            ["add_time", "datetime", "NO", "", None, ""]
         ]
         self.listen_express_desc = [
             ["listen_no", "int(11)", "NO", "PRI", None, "auto_increment"],
@@ -90,10 +91,11 @@ class ExpressDB:
     def new_express_record(self, com_code, waybill_num, recodes, user_no, completed=False):
         if len(recodes) <= 0:
             return True
-        insert_sql = "INSERT INTO %s (com_code,waybill_num,sign_time,sign_info,user_no) VALUES " \
+        insert_sql = "INSERT INTO %s (com_code,waybill_num,sign_time,sign_info,user_no,add_time) VALUES " \
                      % (self.completed_express if completed is True else self.transport_express)
+        now_time = datetime.now().strftime(TIME_FORMAT)
         for recode in recodes:
-            insert_sql += "('%s','%s','%s','%s',%s)," % (com_code, waybill_num, recode["time"], recode["info"], user_no)
+            insert_sql += "('%s','%s','%s','%s',%s,'%s')," % (com_code, waybill_num, recode["time"], recode["info"], user_no, now_time)
         insert_sql = insert_sql[:-1] + ";"
         self.db.execute(insert_sql)
         return True
