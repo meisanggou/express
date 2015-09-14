@@ -235,9 +235,9 @@ class ExpressDB:
                 # 通知用户完成
                 self.send_wx(user_name, openid, "completed", com_code, waybill_num, remark, query_result["express_info"])
                 # 删除transport_express中对应的记录
-                self.del_express_record(com_code, waybill_num)
+                self.del_express_record(com_code, waybill_num, user_no)
                 # 删除listen_express中对应的记录
-                self.del_listen_record(com_code, waybill_num)
+                self.del_listen_record(com_code, waybill_num, user_no)
                 # 将全部记录记入completed_express
                 self.new_express_record(com_code, waybill_num, query_result["express_info"], user_no, True)
                 continue
@@ -258,9 +258,9 @@ class ExpressDB:
                     # 通知用户
                     self.send_wx(user_name, openid, "exception", com_code, waybill_num, remark, express_info)
                     # 删除transport_express中对应的记录
-                    self.del_express_record(com_code, waybill_num)
+                    self.del_express_record(com_code, waybill_num, user_no)
                     # 删除listen_express中对应的记录
-                    self.del_listen_record(com_code, waybill_num)
+                    self.del_listen_record(com_code, waybill_num, user_no)
                 else:
                     # 更新 query_time
                     self.update_listen_record(com_code, waybill_num, user_no, False, True)
