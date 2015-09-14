@@ -151,13 +151,14 @@ class ExpressDB:
             print(e.args)
 
     def select_pre_listen(self, listen_key, user_no):
-        select_sql = "SELECT com_code,waybill_num,remark,query_result FROM %s WHERE listen_key='%s' AND user_no=%s;"\
-                     % (self.pre_listen, listen_key, user_no)
+        select_sql = "SELECT p.com_code,waybill_num,remark,query_result,com_name FROM %s AS p,%s AS c " \
+                     "WHERE p.com_code=c.com_code AND listen_key='%s' AND user_no=%s;"\
+                     % (self.pre_listen, self.express_com, listen_key, user_no)
         result = self.db.execute(select_sql)
         if result <= 0:
             return None
         db_r = self.db.fetchone()
-        return {"com_code": db_r[0], "waybill_num": db_r[1], "remark": db_r[2], "query_result": db_r[3]}
+        return {"com_code": db_r[0], "waybill_num": db_r[1], "remark": db_r[2], "query_result": db_r[3], "com_name": db_r[4]}
 
     def del_pre_listen(self, listen_key, user_no):
         select_sql = "DELETE FROM %s WHERE listen_key='%s' AND user_no='%s';" % (self.pre_listen, listen_key, user_no)
