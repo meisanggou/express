@@ -114,12 +114,10 @@ def get_com():
 def mine_express():
     request_data = json.loads(request.data)
     openid = request_data["openid"]
-    print(openid)
-    user = uDB.select_user_name(openid)
-    print(user)
-    if user is None:
+    user_no = uDB.select_user_no(openid)
+    if user_no is None:
         return json.dumps({"status": 410})
-    listen_info = eDB.select_listen_record(user)
+    listen_info = eDB.select_listen_record(user_no)
     return json.dumps({"status": 001, "message": "get success", "data": listen_info})
 
 
