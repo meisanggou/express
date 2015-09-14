@@ -60,6 +60,10 @@ def explain_express():
     if user_no is None:
         return json.dumps({"status": 410})
     infos = content.split(" ")
+    infos_len = len(infos)
+    for index in range(1, infos_len):
+        if infos[infos_len - index] == "":
+            infos.remove(infos[infos_len - index])
     if len(infos) < 2:
         return json.dumps({"status": 400})
     com = infos[0]
@@ -82,7 +86,7 @@ def explain_express():
         return json.dumps({"status": 421, "message": u"已经在监听"})
     remark = ""
     if len(infos) >= 3:
-        remark = infos[2]
+        remark = infos[2][:10]
     eDB.new_pre_listen(message, com_code, waybill_num, remark, user_no, json.dumps(query_result))
     data = {"com_code": com_code, "waybill_num": waybill_num, "listen_key": message, "com_name": com_name, "remark": remark}
     return json.dumps({"status": 001, "message": "check success", "data": data})
