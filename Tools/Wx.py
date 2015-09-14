@@ -245,7 +245,7 @@ class WxManager:
         if response.status_code / 100 == 2:
             if response.json()["status"] == 001:
                 listen_key = response.json()["data"]
-                return self.start_listen % (listen_key["com_code"], listen_key["waybill_num"])
+                return self.start_listen % (listen_key["com_name"], listen_key["waybill_num"])
             elif response.json()["status"] == 410:
                 return self.bind_remind
             elif response.json()["status"] == 422:

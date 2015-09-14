@@ -150,6 +150,7 @@ class DB(object):
             return execute_message
         except Exception, e:
             error_message = str(e.args)
+            print(error_message)
             return "fail:%s." % error_message
 
     def check_table(self, table_name, table_desc):
