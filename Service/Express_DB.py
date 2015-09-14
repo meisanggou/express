@@ -49,7 +49,7 @@ class ExpressDB:
             ["waybill_num", "varchar(20)", "NO", "", None, ""],
             ["remark", "varchar(10)", "NO", "", None, ""],
             ["insert_time", "datetime", "NO", "", None, ""],
-            ["query_result", "varchar(1000)", "NO", "", None, ""],
+            ["query_result", "varchar(50000)", "NO", "", None, ""],
             ["user_no", "int(11)", "NO", "", None, ""]
         ]
         self.express_com_desc = [
