@@ -262,4 +262,4 @@ class ExpressDB:
                         add_record.append(record)
                 self.new_express_record(com_code, waybill_num, add_record, user_no, False)
                 # 更新update_time query_time
-                self.update_listen_record(com_code, waybill_num, True, True)
+                self.update_listen_record(com_code, waybill_num, user_no, True, True)
