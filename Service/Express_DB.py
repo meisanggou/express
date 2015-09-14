@@ -255,7 +255,7 @@ class ExpressDB:
                 # 添加运输记录
                 add_record = []
                 for record in express_info:
-                    if max_sign_time < datetime.strptime(record["time"], TIME_FORMAT):
+                    if max_sign_time is None or max_sign_time < datetime.strptime(record["time"], TIME_FORMAT):
                         add_record.append(record)
                 self.new_express_record(com_code, waybill_num, add_record, False)
                 # 更新update_time query_time

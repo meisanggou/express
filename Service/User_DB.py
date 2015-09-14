@@ -14,7 +14,7 @@ class UserDB:
         self.db.connect()
         self.user = "express_user"
         self.user_desc = [
-            ["user", "varchar(15)", "NO", "PRI", None, ""],
+            ["user_name", "varchar(15)", "NO", "PRI", None, ""],
             ["openid", "char(28)", "NO", "", None, ""]
         ]
 
