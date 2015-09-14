@@ -169,13 +169,15 @@ class ExpressDB:
             return False
         return True
 
-    def select_com(self, com):
+    def select_com(self, com="", like=True):
         try:
-            if com != "":
+            if com == "":
+                select_sql = "SELECT com_name,com_code FROM express_com;"
+            elif like is True:
                 select_sql = "SELECT com_name,com_code FROM express_com WHERE com_name LIKE '%%%s%%' " \
                              "OR com_code LIKE '%%%s%%';" % (com, com)
             else:
-                select_sql = "SELECT com_name,com_code FROM express_com;"
+                select_sql = "SELECT com_name,com_code FROM express_com WHERE com_code='%s';" % com
             self.db.execute(select_sql)
             com_info = []
             for item in self.db.fetchall():
@@ -185,7 +187,9 @@ class ExpressDB:
             print(e.args)
             return []
 
-    def send_wx(self, user_name, openid, status, com, waybill, remark, records):
+    def send_wx(self, user_name, openid, status, com_code, waybill, remark, records):
+        # 获得快递公司名称
+        com_name = self.select_com(com_code, False)[0]["com_name"]
         part_records = []
         len_info = len(records)
         for index in range(0, 3):
@@ -193,7 +197,7 @@ class ExpressDB:
                 part_records.append({"time": "", "info": ""})
                 continue
             part_records.append(records[len_info + index - 3])
-        self.wx.send_express_template(user_name, openid, status, com, waybill, remark, part_records)
+        self.wx.send_express_template(user_name, openid, status, com_name, waybill, remark, part_records)
 
     def loop_query(self):
         eq = ExpressQuery()
