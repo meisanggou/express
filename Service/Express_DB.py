@@ -140,6 +140,13 @@ class ExpressDB:
             listen_info.append({"com_code": item[0], "waybill_num": item[1], "remark": item[2], "com_name": item[3]})
         return listen_info
 
+    def check_listen_record(self, com_code, waybill_num, user_no):
+        select_sql = "SELECT listen_no FROM %s WHERE com_code='%s' AND waybill_num='%s' AND user_no=%s;" % (self.listen_express, com_code, waybill_num, user_no)
+        result = self.db.execute(select_sql)
+        if result > 0:
+            return True
+        return False
+
     def new_pre_listen(self, listen_key, com_code, waybill_num, remark, user_no, query_result):
         try:
             now_time = datetime.now().strftime(TIME_FORMAT)
