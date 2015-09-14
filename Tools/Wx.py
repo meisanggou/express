@@ -39,7 +39,7 @@ class WxManager:
         self.bind_repeat = u"您的微信账号已经绑定%s，无需重复绑定"
         self.bind_used = u"您想绑定的用户名%s已经被绑定，请更换用户名重试"
         self.waybill_error = u"您想监听的运单 %s 不能监听"
-        self.explain_success = u"***恭喜您*** 您提供的%s公司运单号为%s快递可以监听,监听密钥：%s。" \
+        self.explain_success = u"***恭喜您***\n 您提供的%s公司运单号为%s备注为%s的快递可以监听,监听密钥：%s。" \
                                u"请直接复制本条消息回复，即可开始监听。"
         self.invalid_listen_key = u"无效的监听密钥"
         self.start_listen = u"已经开始监听您的快递%s %s"
@@ -209,7 +209,7 @@ class WxManager:
         if response.status_code / 100 == 2:
             result = response.json()
             if result["status"] == 001:
-                return self.explain_success % (result["data"]["com_code"], result["data"]["waybill_num"], result["data"]["listen_key"])
+                return self.explain_success % (result["data"]["com_name"], result["data"]["waybill_num"], result["data"]["remark"], result["data"]["listen_key"])
             elif result["status"] == 410:
                 return self.bind_remind
             elif result["status"] == 421:
@@ -237,7 +237,7 @@ class WxManager:
         return content
 
     def handle_msg_text_add_listen(self, content, openid):
-        regex = self.explain_success[10:] % ("[a-z]+", "[0-9]{10,12}", "([a-z0-9]{32})")
+        regex = self.explain_success[10:] % ("[a-z]+", "[0-9]{10,12}", "[\s\S]*?", "([a-z0-9]{32})")
         keys = re.findall(regex, content)
         if len(keys) != 1:
             return content

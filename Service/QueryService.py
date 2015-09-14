@@ -79,7 +79,7 @@ def explain_express():
     if len(infos) >= 3:
         remark = infos[2]
     eDB.new_pre_listen(message, com_code, waybill_num, remark, user_no, json.dumps(query_result))
-    data = {"com_code": com_code, "waybill_num": waybill_num, "listen_key": message, "com_name": com_info[0]["com_name"]}
+    data = {"com_code": com_code, "waybill_num": waybill_num, "listen_key": message, "com_name": com_info[0]["com_name"], "remark": remark}
     return json.dumps({"status": 001, "message": "check success", "data": data})
 
 
