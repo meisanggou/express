@@ -29,7 +29,7 @@ wx = WxManager()
 # for zi in zto_info["express_info"]:
 #     print(zi["time"])
 #     print(zi["info"])
-response = requests.post("http://127.0.0.1:1191/bind/", data=json.dumps({"user_name": u"鹛桑够2", "openid": "oFBQiwq5QlIBtUTsr2tuMIFnSORs"}))
+response = requests.post("http://127.0.0.1:1191/add/", data=json.dumps({"listen_key": "a87fcb5c5a8711e58c6c00163e0045ef", "openid": "oFBQiwq5QlIBtUTsr2tuMIFnSORs"}))
 print(response.text)
 
 

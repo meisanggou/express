@@ -32,7 +32,7 @@ class ExpressDB:
             ["waybill_num", "varchar(20)", "NO", "", None, ""],
             ["sign_time", "datetime", "NO", "", None, ""],
             ["sign_info", "varchar(150)", "NO", "", None, ""],
-            ["user", "varchar(30)", "NO", "", None, ""]
+            ["user_no", "int(11)", "NO", "", None, ""]
         ]
         self.listen_express_desc = [
             ["listen_no", "int(11)", "NO", "PRI", None, "auto_increment"],
@@ -87,19 +87,19 @@ class ExpressDB:
     def check_express_com(self):
         return self.db.check_table(self.express_com, self.express_com_desc)
 
-    def new_express_record(self, com_code, waybill_num, recodes, completed=False):
+    def new_express_record(self, user_no, com_code, waybill_num, recodes, completed=False):
         if len(recodes) <= 0:
             return True
-        insert_sql = "INSERT INTO %s (com_code,waybill_num,sign_time,sign_info) VALUES " \
+        insert_sql = "INSERT INTO %s (com_code,waybill_num,sign_time,sign_info,user_no) VALUES " \
                      % (self.completed_express if completed is True else self.transport_express)
         for recode in recodes:
-            insert_sql += "('%s','%s','%s','%s')," % (com_code, waybill_num, recode["time"], recode["info"])
+            insert_sql += "('%s','%s','%s','%s',%s)," % (com_code, waybill_num, recode["time"], recode["info"], user_no)
         insert_sql = insert_sql[:-1] + ";"
         self.db.execute(insert_sql)
         return True
 
-    def del_express_record(self, com_code, waybill_num):
-        del_sql = "DELETE FROM %s WHERE com_code='%s' AND waybill_num='%s';" % (self.transport_express, com_code, waybill_num)
+    def del_express_record(self, com_code, waybill_num, user_no):
+        del_sql = "DELETE FROM %s WHERE com_code='%s' AND waybill_num='%s' AND user_no=%s;" % (self.transport_express, com_code, waybill_num, user_no)
         self.db.execute(del_sql)
         return True
 
@@ -226,7 +226,7 @@ class ExpressDB:
                 # 删除listen_express中对应的记录
                 self.del_listen_record(com_code, waybill_num)
                 # 将全部记录记入completed_express
-                self.new_express_record(com_code, waybill_num, query_result["express_info"], True)
+                self.new_express_record(com_code, waybill_num, query_result["express_info"], user_no, True)
                 continue
             express_info = query_result["express_info"]
             if len(express_info) <= 0:
@@ -260,6 +260,6 @@ class ExpressDB:
                 for record in express_info:
                     if max_sign_time is None or max_sign_time < datetime.strptime(record["time"], TIME_FORMAT):
                         add_record.append(record)
-                self.new_express_record(com_code, waybill_num, add_record, False)
+                self.new_express_record(com_code, waybill_num, add_record, user_no, False)
                 # 更新update_time query_time
                 self.update_listen_record(com_code, waybill_num, True, True)

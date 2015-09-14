@@ -97,7 +97,7 @@ def add_listen():
         return json.dumps({"status": 422})
     # 添加到运输记录中
     recodes = json.loads(listen_info["query_result"])
-    eDB.new_express_record(listen_info["com_code"], listen_info["waybill_num"], recodes)
+    eDB.new_express_record(listen_info["com_code"], listen_info["waybill_num"], recodes, user_no)
     # 添加到监听列表中
     eDB.new_listen_record(listen_info["com_code"], listen_info["waybill_num"], listen_info["remark"], user_no)
     eDB.del_pre_listen(listen_key, user_no)
