@@ -263,7 +263,7 @@ class ExpressDB:
                     self.del_listen_record(com_code, waybill_num)
                 else:
                     # 更新 query_time
-                    self.update_listen_record(com_code, waybill_num, False, True)
+                    self.update_listen_record(com_code, waybill_num, user_no, False, True)
             else:
                 print("%s %s has new info." % (com_code, waybill_num))
                 # 通知用户
