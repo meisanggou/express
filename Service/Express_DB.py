@@ -216,7 +216,7 @@ class ExpressDB:
                 print("Sleep 5 Minutes")
                 sleep(300)
                 # 最后最晚查询过的一条记录
-                select_sql = "SELECT com_code,waybill_num,MIN(query_time),update_time,user_no,remark FROM listen_express;"
+                select_sql = "SELECT com_code,waybill_num,query_time,update_time,user_no,remark from listen_express where query_time = (SELECT MIN(query_time) FROM listen_express);"
                 self.db.execute(select_sql)
                 record = self.db.fetchone()
                 if record[0] is None:
