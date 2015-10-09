@@ -41,7 +41,7 @@ def check_signature():
         return "false"
     except Exception as e:
         error_message = "check sign exp: %s url:" % str(e.args)
-        my_email.send_system_exp(request.url, "wx", error_message, 0)
+        # my_email.send_system_exp(request.url, "wx", error_message, 0)
         return "false"
 
 
