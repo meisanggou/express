@@ -53,43 +53,46 @@ def bind():
 
 @msg_service.route('/explain/', methods=["POST"])
 def explain_express():
-    request_data = json.loads(request.data)
-    content = request_data["content"]
-    openid = request_data["openid"]
-    user_no = uDB.select_user_no(openid)
-    if user_no is None:
-        return json.dumps({"status": 410})
-    infos = content.split(" ")
-    infos_len = len(infos)
-    for index in range(1, infos_len):
-        if infos[infos_len - index] == "":
-            infos.remove(infos[infos_len - index])
-    if len(infos) < 2:
-        return json.dumps({"status": 400})
-    com = infos[0]
-    if len(com) <= 0:
-        return json.dumps({"status": 421, "message": u"快递公司不明确"})
-    # 查询快递是否存在
-    com_info = eDB.select_com(com)
-    if len(com_info) == 0:
-        return json.dumps({"status": 421, "message": u"快递公司不支持"})
-    if len(com_info) > 1:
-        return json.dumps({"status": 421, "message": u"快递公司不明确"})
-    com_code = com_info[0]["com_code"]
-    com_name = com_info[0]["com_name"]
-    waybill_num = infos[1]
-    check_result, message, query_result = eb.check_waybill(com_code, waybill_num)
-    if check_result is False:
-        return json.dumps({"status": 421, "message": message})
-    check_result = eDB.check_listen_record(com_code, waybill_num, user_no)
-    if check_result is True:
-        return json.dumps({"status": 421, "message": u"已经在监听"})
-    remark = ""
-    if len(infos) >= 3:
-        remark = infos[2][:10]
-    eDB.new_pre_listen(message, com_code, waybill_num, remark, user_no, json.dumps(query_result))
-    data = {"com_code": com_code, "waybill_num": waybill_num, "listen_key": message, "com_name": com_name, "remark": remark}
-    return json.dumps({"status": 001, "message": "check success", "data": data})
+    try:
+        request_data = json.loads(request.data)
+        content = request_data["content"]
+        openid = request_data["openid"]
+        user_no = uDB.select_user_no(openid)
+        if user_no is None:
+            return json.dumps({"status": 410})
+        infos = content.split(" ")
+        infos_len = len(infos)
+        for index in range(1, infos_len):
+            if infos[infos_len - index] == "":
+                infos.remove(infos[infos_len - index])
+        if len(infos) < 2:
+            return json.dumps({"status": 400})
+        com = infos[0]
+        if len(com) <= 0:
+            return json.dumps({"status": 421, "message": u"快递公司不明确"})
+        # 查询快递是否存在
+        com_info = eDB.select_com(com)
+        if len(com_info) == 0:
+            return json.dumps({"status": 421, "message": u"快递公司不支持"})
+        if len(com_info) > 1:
+            return json.dumps({"status": 421, "message": u"快递公司不明确"})
+        com_code = com_info[0]["com_code"]
+        com_name = com_info[0]["com_name"]
+        waybill_num = infos[1]
+        check_result, message, query_result = eb.check_waybill(com_code, waybill_num)
+        if check_result is False:
+            return json.dumps({"status": 421, "message": message})
+        check_result = eDB.check_listen_record(com_code, waybill_num, user_no)
+        if check_result is True:
+            return json.dumps({"status": 421, "message": u"已经在监听"})
+        remark = ""
+        if len(infos) >= 3:
+            remark = infos[2][:10]
+        eDB.new_pre_listen(message, com_code, waybill_num, remark, user_no, json.dumps(query_result))
+        data = {"com_code": com_code, "waybill_num": waybill_num, "listen_key": message, "com_name": com_name, "remark": remark}
+        return json.dumps({"status": 001, "message": "check success", "data": data})
+    except Exception as e:
+        return json.dumps({"status": 500, "message": str(e.args)})
 
 
 @msg_service.route('/add/', methods=["POST"])
