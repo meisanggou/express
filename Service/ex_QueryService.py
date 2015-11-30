@@ -124,7 +124,7 @@ def look_listen():
     if user is None:
         return json.dumps({"status": 410})
     user_no = user["user_no"]
-    listen_info = eDB.select_listen_record(user_no)
+    listen_info = eDB.select_listen_record(user_no, listen_no)
     if len(listen_info) <= 0:
         return json.dumps({"status": 423, "message": u"查找的快递编号不存在"})
     listen_info = listen_info[0]
