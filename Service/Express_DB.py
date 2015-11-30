@@ -134,12 +134,13 @@ class ExpressDB:
         return True
 
     def select_listen_record(self, user_no):
-        select_sql = "SELECT l.com_code,waybill_num,remark,com_name FROM %s AS l,%s AS c WHERE user_no=%s " \
+        select_sql = "SELECT listen_no,l.com_code,waybill_num,remark,com_name FROM %s AS l,%s AS c WHERE user_no=%s " \
                      "AND l.com_code=c.com_code;" % (self.listen_express, self.express_com, user_no)
         result = self.db.execute(select_sql)
         listen_info = []
         for item in self.db.fetchall():
-            listen_info.append({"com_code": item[0], "waybill_num": item[1], "remark": item[2], "com_name": item[3]})
+            listen_info.append({"listen_no": item[0], "com_code": item[1], "waybill_num": item[2], "remark": item[3],
+                                "com_name": item[4]})
         return listen_info
 
     def check_listen_record(self, com_code, waybill_num, user_no):
