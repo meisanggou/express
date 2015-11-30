@@ -115,6 +115,27 @@ def add_listen():
     return json.dumps({"status": 001, "message": "listen success", "data": listen_info})
 
 
+@msg_service.route('/look/', methods=["GET"])
+def look_listen():
+    request_data = json.loads(request.data)
+    openid = request_data["openid"]
+    listen_no = request_data["listen_no"]
+    user = uDB.select_user(openid=openid)
+    if user is None:
+        return json.dumps({"status": 410})
+    user_no = user["user_no"]
+    listen_info = eDB.select_listen_record(user_no)
+    if len(listen_info) <= 0:
+        return json.dumps({"status": 423, "message": u"查找的快递编号不存在"})
+    listen_info = listen_info[0]
+    express_record = eDB.select_record_info(user_no, listen_info["com_code"], listen_info["waybill_num"])
+    eDB.send_wx(user["user_name"], user["openid"], "mine", listen_info["com_code"], listen_info["waybill_num"],
+                listen_info["remark"], express_record)
+    return json.dumps({"status": 001, "message": "listen success", "data": {"express_info": listen_info,
+                                                                            "express_record": express_record,
+                                                                            "user_info": user}})
+
+
 @msg_service.route('/com/', methods=["GET"])
 def get_com():
     com_info = eDB.select_com("")

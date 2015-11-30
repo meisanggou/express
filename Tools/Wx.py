@@ -194,6 +194,8 @@ class WxManager:
                 content = self.handle_msg_text_express_user(content, from_user)
             elif len(content) > 2 and content[0:3] == "***":
                 content = self.handle_msg_text_add_listen(content, from_user)
+            elif len(content) > 4 and content[0:5] == u"我的快递 ":
+                content = self.handle_msg_text_look_listen(content, from_user)
             to_user = xml_msg.find("ToUserName").text
             create_time = str(int(time.time()))
             res = {"to_user": from_user, "from_user": to_user, "create_time": create_time, "content": content}
@@ -250,6 +252,24 @@ class WxManager:
                 return self.bind_remind
             elif response.json()["status"] == 422:
                 return self.invalid_listen_key
+            else:
+                return response.text
+        else:
+            return response.status_code
+        return content
+
+    def handle_msg_text_look_listen(self, content, openid):
+        listen_no = re.findall("[\d]+", content)
+        if len(listen_no) != 1:
+            return content
+        if len(listen_no[0]) > 10:
+            return content
+        response = requests.get(query_service_url + "/look/", data=json.dumps({"listen_no": int(listen_no[0]), "openid": openid}))
+        if response.status_code / 100 == 2:
+            if response.json()["status"] == 001:
+                return u"即将推送给您"
+            elif response.json()["status"] == 410:
+                return self.bind_remind
             else:
                 return response.text
         else:
@@ -328,10 +348,11 @@ class WxManager:
                 if response.status_code / 100 == 2:
                     if response.json()["status"] == 001:
                         listen_info = response.json()["data"]
-                        content = u"欢迎您使用我们的应用监听快递信息\n您监听的快递有：\n"
+                        content = u"您监听的快递有：\n"
                         for li in listen_info:
                             content += "编号：%s 快递公司：%s 运单号：%s 运单备注：%s\n" % (li["listen_no"], li["com_name"],
                                                                            li["waybill_num"], li["remark"])
+                        content += "回复我的快递+编号(例如：我的快递 1)查看快递运送信息"
                     elif response.json()["status"] == 410:
                         content = self.bind_remind
                     else:
@@ -361,18 +382,19 @@ class WxManager:
             return ""
 
     # 发送消息
-    def send_express_template(self, user_name, openid, status, com, waybill, remark, records):
+    def send_express_template(self, user_name, openid, status, com, com_code, waybill, remark, records):
         try:
-            if status not in ("transport", "completed", "exception"):
+            if status not in ("transport", "completed", "exception", "mine"):
                 return "fail"
             temp_status = {"transport": "6atTNaoeH-Xaqf4Q-tBYInLs_fqR0h1dcNOfAgIfUBc",
                            "completed": "OFeSZXk6wNQVmX1GJ8P67bXe6FOoEMcMo1s49jIE-Nc",
-                           "exception": "SHun5Ndh8NQDOCkFoi8XM5Lur5TyD1_9LrndC3QN9G0"}
+                           "exception": "SHun5Ndh8NQDOCkFoi8XM5Lur5TyD1_9LrndC3QN9G0",
+                           "mine": "Plj7_3JKJHB0EbAs7XdkLzTQ4l5Mo-IuxsXbN3TpXRc"}
             url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s" % self.get_access_token()
             request_data = {}
             request_data["template_id"] = temp_status[status]
             request_data["touser"] = openid
-            request_data["url"] = "http://meisanggou.club/"
+            request_data["url"] = "http://m.kuaidi100.com/index_all.html?type=%s&postid=%s" % (com_code, waybill)
             request_data["data"] = {}
             request_data["data"]["user_name"] = {"value": user_name, "color": "#173177"}
             request_data["data"]["com"] = {"value": com, "color": "#000000"}

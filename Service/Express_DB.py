@@ -133,9 +133,12 @@ class ExpressDB:
         self.db.execute(del_sql)
         return True
 
-    def select_listen_record(self, user_no):
+    def select_listen_record(self, user_no, listen_no=None):
         select_sql = "SELECT listen_no,l.com_code,waybill_num,remark,com_name FROM %s AS l,%s AS c WHERE user_no=%s " \
-                     "AND l.com_code=c.com_code;" % (self.listen_express, self.express_com, user_no)
+                     "AND l.com_code=c.com_code" % (self.listen_express, self.express_com, user_no)
+        if listen_no is not None:
+            select_sql += " AND listen_no=%s" % listen_no
+        select_sql += ";"
         result = self.db.execute(select_sql)
         listen_info = []
         for item in self.db.fetchall():
@@ -172,6 +175,15 @@ class ExpressDB:
         db_r = self.db.fetchone()
         return {"com_code": db_r[0], "waybill_num": db_r[1], "remark": db_r[2], "query_result": db_r[3], "com_name": db_r[4]}
 
+    def select_record_info(self, user_no, com_code, waybill_num):
+        select_sql = "SELECT sign_time,sign_info,add_time FROM %s WHERE com_code='%s' AND waybill_num='%s' AND user_no=%s;" \
+                     % (self.transport_express, com_code, waybill_num, user_no)
+        self.db.execute(select_sql)
+        records = []
+        for item in self.db.fetchall():
+            records.append({"sign_time": item[0], "sign_info": item[1], "add_time": item[2]})
+        return records
+
     def del_pre_listen(self, listen_key, user_no):
         select_sql = "DELETE FROM %s WHERE listen_key='%s' AND user_no='%s';" % (self.pre_listen, listen_key, user_no)
         result = self.db.execute(select_sql)
@@ -207,7 +219,7 @@ class ExpressDB:
                 part_records.append({"time": "", "info": ""})
                 continue
             part_records.append(records[len_info + index - 3])
-        self.wx.send_express_template(user_name, openid, status, com_name, waybill, remark, part_records)
+        self.wx.send_express_template(user_name, openid, status, com_name, com_code, waybill, remark, part_records)
 
     def loop_query(self):
         try:
