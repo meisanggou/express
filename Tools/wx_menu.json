@@ -1,21 +1,21 @@
 {
     "button": [
         {
-            "name": "æˆ‘çš„å¿«é€’",
+            "name": "ÎÒµÄ¿ìµİ",
             "type": "click",
             "key": "my_express"
         },
         {
-            "name": "ç›‘å¬å¿«é€’",
+            "name": "¼àÌı¿ìµİ",
             "sub_button": [
                 {
                     "type": "click",
-                    "name": "å¦‚ä½•ç›‘å¬",
+                    "name": "ÈçºÎ¼àÌı",
                     "key": "listen_express"
                 },
                 {
                     "type": "click",
-                    "name": "å¿«é€’å…¬å¸",
+                    "name": "¿ìµİ¹«Ë¾",
                     "key": "express_com"
                 }
             ]
