@@ -43,7 +43,7 @@ class WxManager:
                                u"请直接复制本条消息回复，即可开始监听。"
         self.invalid_listen_key = u"无效的监听密钥"
         self.start_listen = u"已经开始监听您的快递%s %s"
-        self.listen_info = u"欢迎您使用我们的应用监听快递信息\n首先你先点击我的快递，再点击快递公司查看我们" \
+        self.listen_info = u"欢迎您使用我们的应用监听快递信息\n首先你先点击监听快递，再点击快递公司查看我们" \
                            u"支持的快递公司\n如果我们已经支持您要监听的快递公司，" \
                            u"回复快递+空格+快递公司名称+空格+运单号+空格+运单备注（例如：快递 申通快递 229255098587 电池）即可监听"
 
@@ -332,7 +332,7 @@ class WxManager:
                 if response.status_code / 100 == 2:
                     if response.json()["status"] == 001:
                         com_info = response.json()["data"]
-                        content = u"欢迎您使用我们的应用监听快递信息\n我们暂时支持的快递公司有：\n"
+                        content = u"我们暂时支持的快递公司有：\n"
                         for ci in com_info:
                             content += ci["com_name"] + " "
                     elif response.json()["status"] == 410:
