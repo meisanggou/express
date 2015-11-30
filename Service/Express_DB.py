@@ -181,7 +181,8 @@ class ExpressDB:
         self.db.execute(select_sql)
         records = []
         for item in self.db.fetchall():
-            records.append({"sign_time": item[0], "sign_info": item[1], "add_time": item[2]})
+            records.append({"sign_time": item[0].strftime(TIME_FORMAT), "sign_info": item[1],
+                            "add_time": item[2].strftime(TIME_FORMAT)})
         return records
 
     def del_pre_listen(self, listen_key, user_no):

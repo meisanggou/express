@@ -129,6 +129,7 @@ def look_listen():
         return json.dumps({"status": 423, "message": u"查找的快递编号不存在"})
     listen_info = listen_info[0]
     express_record = eDB.select_record_info(user_no, listen_info["com_code"], listen_info["waybill_num"])
+    print(express_record)
     eDB.send_wx(user["user_name"], user["openid"], "mine", listen_info["com_code"], listen_info["waybill_num"],
                 listen_info["remark"], express_record)
     return json.dumps({"status": 001, "message": "listen success", "data": {"express_info": listen_info,
