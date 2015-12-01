@@ -227,17 +227,17 @@ class ExpressDB:
             eq = ExpressQuery()
             while True:
                 # 睡眠5分钟
-                print("Sleep 5 Minutes")
+                print("%s Sleep 5 Minutes" % datetime.now().strftime(TIME_FORMAT))
                 sleep(300)
                 # 最后最晚查询过的一条记录
                 select_sql = "SELECT com_code,waybill_num,query_time,update_time,user_no,remark from listen_express where query_time = (SELECT MIN(query_time) FROM listen_express);"
                 result = self.db.execute(select_sql)
                 if result <= 0:
-                    print("No Listen Record")
+                    print("%s No Listen Record" % datetime.now().strftime(TIME_FORMAT))
                     continue
                 record = self.db.fetchone()
                 if record[0] is None:
-                    print("No Listen Record")
+                    print("%s No Listen Record" % datetime.now().strftime(TIME_FORMAT))
                     continue
                 com_code = record[0]
                 waybill_num = record[1]
@@ -247,11 +247,11 @@ class ExpressDB:
                 user_info = self.uDB.select_user(user_no)
                 openid = user_info["openid"]
                 user_name = user_info["user_name"]
-                print("Start Handle %s %s" % (com_code, waybill_num))
+                print("%s Start Handle %s %s" % (datetime.now().strftime(TIME_FORMAT), com_code, waybill_num))
                 # 查询现在快速状态
                 query_result = eq.query(com_code, waybill_num)
                 if query_result["completed"] is True:
-                    print("%s %s completed" % (com_code, waybill_num))
+                    print("%s %s %s completed" % (datetime.now().strftime(TIME_FORMAT), com_code, waybill_num))
                     # 通知用户完成
                     self.send_wx(user_name, openid, "completed", com_code, waybill_num, remark, query_result["express_info"])
                     # 删除transport_express中对应的记录
@@ -274,7 +274,7 @@ class ExpressDB:
                     # 没有更新的快递信息
                     # 判断是否超过5天没有更新记录
                     if (datetime.now() - update_time).days >= 5:
-                        print("Long time no info")
+                        print("%s Long time no info" % datetime.now().strftime(TIME_FORMAT))
                         # 通知用户
                         self.send_wx(user_name, openid, "exception", com_code, waybill_num, remark, express_info)
                         # 删除transport_express中对应的记录
@@ -285,7 +285,7 @@ class ExpressDB:
                         # 更新 query_time
                         self.update_listen_record(com_code, waybill_num, user_no, False, True)
                 else:
-                    print("%s %s has new info." % (com_code, waybill_num))
+                    print("%s %s %s has new info." % (datetime.now().strftime(TIME_FORMAT), com_code, waybill_num))
                     # 通知用户
                     self.send_wx(user_name, openid, "transport", com_code, waybill_num, remark, express_info)
                     # 添加运输记录
@@ -297,5 +297,5 @@ class ExpressDB:
                     # 更新update_time query_time
                     self.update_listen_record(com_code, waybill_num, user_no, True, True)
         except Exception as e:
-            error_message = "loop query exception :%s" % str(e.args)
+            error_message = "%s loop query exception :%s" % (datetime.now().strftime(TIME_FORMAT), str(e.args))
             my_email.send_system_exp("loop query function", "", error_message, 0)
