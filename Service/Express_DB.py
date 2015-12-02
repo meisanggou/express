@@ -16,6 +16,7 @@ __author__ = 'zhouheng'
 
 my_email = MyEmailManager()
 
+
 class ExpressDB:
 
     def __init__(self):
@@ -301,3 +302,5 @@ class ExpressDB:
             error_message = "%s loop query exception :%s" % (datetime.now().strftime(TIME_FORMAT), str(e.args))
             print(error_message)
             my_email.send_system_exp("loop query function", "", error_message, 0)
+            print("%s run again" % datetime.now().strftime(TIME_FORMAT))
+            self.loop_query()
