@@ -223,17 +223,18 @@ class ExpressDB:
         self.wx.send_express_template(user_name, openid, status, com_name, com_code, waybill, remark, part_records)
 
     def loop_query(self):
+        sleep_min = 5
         try:
             eq = ExpressQuery()
             while True:
                 # 睡眠5分钟
-                print("%s Sleep 5 Minutes" % datetime.now().strftime(TIME_FORMAT))
-                sleep(300)
+                print("%s Sleep %s Minutes" % (datetime.now().strftime(TIME_FORMAT), sleep_min))
+                sleep(sleep_min * 60)
                 # 最后最晚查询过的一条记录
-                select_sql = "SELECT com_code,waybill_num,query_time,update_time,user_no,remark from listen_express where query_time = (SELECT MIN(query_time) FROM listen_express);"
+                select_sql = "SELECT com_code,waybill_num,query_time,update_time,user_no,remark FROM listen_express WHERE query_time = (SELECT MIN(query_time) FROM listen_express);"
                 result = self.db.execute(select_sql)
                 if result <= 0:
-                    print("%s No Listen Record" % datetime.now().strftime(TIME_FORMAT))
+                    print("%s No Listen Record." % datetime.now().strftime(TIME_FORMAT))
                     continue
                 record = self.db.fetchone()
                 if record[0] is None:
@@ -298,4 +299,5 @@ class ExpressDB:
                     self.update_listen_record(com_code, waybill_num, user_no, True, True)
         except Exception as e:
             error_message = "%s loop query exception :%s" % (datetime.now().strftime(TIME_FORMAT), str(e.args))
+            print(error_message)
             my_email.send_system_exp("loop query function", "", error_message, 0)
