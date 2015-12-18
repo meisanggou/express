@@ -194,7 +194,7 @@ class WxManager:
                 content = self.handle_msg_text_express_user(content, from_user)
             elif len(content) > 2 and content[0:3] == "***":
                 content = self.handle_msg_text_add_listen(content, from_user)
-            elif len(content) > 2 and content[:3] == u"考研":
+            elif len(content) > 2 and content[:3] == u"考研 ":
                 content = self.handle_msg_ky(content)
             elif len(content) > 4 and content[0:5] == u"我的快递 ":
                 content = self.handle_msg_text_look_listen(content, from_user)
