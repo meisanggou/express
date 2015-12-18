@@ -194,6 +194,8 @@ class WxManager:
                 content = self.handle_msg_text_express_user(content, from_user)
             elif len(content) > 2 and content[0:3] == "***":
                 content = self.handle_msg_text_add_listen(content, from_user)
+            elif len(content) > 2 and content[:3] == u"考研":
+                content = self.handle_msg_ky(content)
             elif len(content) > 4 and content[0:5] == u"我的快递 ":
                 content = self.handle_msg_text_look_listen(content, from_user)
             to_user = xml_msg.find("ToUserName").text
@@ -276,6 +278,26 @@ class WxManager:
             return response.status_code
         return content
 
+    def handle_msg_ky(self, content):
+        info = content[3:].trim(" ")
+        request_url_format = "http://www.kfszsb.com/ajax_2014.asp?act=yjs&ksbh=%s&bmh=&zjhm=%s&t=0.34829033026471734"
+        if info == u"马铭章" or info == u"傻梦" or info == u"乖乖":
+            request_url = request_url_format % ('102856210201028', '411481199308247826')
+        else:
+            sp_info = info.split(" ")
+            ky_info = []
+            for item in sp_info:
+                if item != " ":
+                    ky_info.append(item)
+            if len(ky_info) < 2:
+                return u"输入信息有误"
+            request_url = request_url_format % (ky_info[0], ky_info[1])
+        res = requests.get(request_url)
+        if res.status_code != 200:
+            return content
+        return u"请求地址%s\n返回信息%s" % (request_url, res.text)
+
+    
     def handle_msg_voice(self, xml_msg):
         try:
             from_user = xml_msg.find("FromUserName").text
