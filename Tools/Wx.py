@@ -279,24 +279,27 @@ class WxManager:
         return content
 
     def handle_msg_ky(self, content):
-        info = content[3:].strip(" ")
-        request_url_format = "http://www.kfszsb.com/ajax_2014.asp?act=yjs&ksbh=%s&bmh=&zjhm=%s&t=0.34829033026471734"
-        if info == u"马铭章" or info == u"傻梦" or info == u"乖乖":
-            request_url = request_url_format % ('102856210201028', '411481199308247826')
-        else:
-            sp_info = info.split(" ")
-            ky_info = []
-            for item in sp_info:
-                if item != " ":
-                    ky_info.append(item)
-            if len(ky_info) < 2:
-                return u"输入信息有误"
-            request_url = request_url_format % (ky_info[0], ky_info[1])
-        res = requests.get(request_url)
-        if res.status_code != 200:
-            return content
-        return u"请求地址%s\n返回信息%s" % (request_url, res.text)
-
+        try:
+            info = content[3:].strip(" ")
+            request_url_format = "http://www.kfszsb.com/ajax_2014.asp?act=yjs&ksbh=%s&bmh=&zjhm=%s&t=0.34829033026471734"
+            if info == u"马铭章" or info == u"傻梦" or info == u"乖乖":
+                request_url = request_url_format % ('102856210201028', '411481199308247826')
+            else:
+                sp_info = info.split(" ")
+                ky_info = []
+                for item in sp_info:
+                    if item != " ":
+                        ky_info.append(item)
+                if len(ky_info) < 2:
+                    return u"输入信息有误"
+                request_url = request_url_format % (ky_info[0], ky_info[1])
+            res = requests.get(request_url)
+            if res.status_code != 200:
+                return content
+            return u"请求地址%s\n返回信息%s" % (request_url, res.text)
+        except Exception as e:
+            error_message = str(e.args)
+            return error_message
 
     def handle_msg_voice(self, xml_msg):
         try:
