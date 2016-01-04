@@ -419,7 +419,7 @@ class WxManager:
             request_data = {}
             request_data["template_id"] = temp_status[status]
             request_data["touser"] = openid
-            request_data["url"] = "http://m.kuaidi100.com/index_all.html?type=%s&postid=%s" % (com_code, waybill)
+            request_data["url"] = "http://m.kuaidi100.com/index_all.html?type=%s&postid=%s&callbackurl=http://meisanggou.club" % (com_code, waybill)
             request_data["data"] = {}
             request_data["data"]["user_name"] = {"value": user_name, "color": "#173177"}
             request_data["data"]["com"] = {"value": com, "color": "#000000"}
