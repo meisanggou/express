@@ -88,6 +88,7 @@ class ExpressQuery:
     def kd100(self, comCode, wayBill):
         url = "http://www.kuaidi100.com/query?type=%s&postid=%s&id=1&valicode=&temp=0.023800994968041778" % (comCode, wayBill)
         response = requests.get(url)
+        print(url)
         result = json.loads(response.text)
         express_info = []
         status_code = 0
