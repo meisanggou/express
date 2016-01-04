@@ -78,6 +78,13 @@ class ExpressQuery:
         zto_info = {"express_info": express_info, "status_code": status_code, "completed": completed}
         return zto_info
 
+    def zhaijisong(self, orderNos):
+        url = "http://www.zjs.com.cn/api/tracking.jspx"
+        data = "orderNos=%s" % orderNos
+        response = requests.post(url, data=data)
+        print(response.text)
+        return "true"
+
     def kd100(self, comCode, wayBill):
         url = "http://www.kuaidi100.com/query?type=%s&postid=%s&id=1&valicode=&temp=0.023800994968041778" % (comCode, wayBill)
         response = requests.get(url)

@@ -29,7 +29,10 @@ wx = WxManager()
 # for zi in zto_info["express_info"]:
 #     print(zi["time"])
 #     print(zi["info"])
-response = requests.get("http://127.0.0.1:1191/look/", data=json.dumps({"listen_no": "1", "openid": "oFBQiwq5QlIBtUTsr2tuMIFnSORs"}))
-print(response.text)
+# response = requests.get("http://127.0.0.1:1191/look/", data=json.dumps({"listen_no": "1", "openid": "oFBQiwq5QlIBtUTsr2tuMIFnSORs"}))
+# print(response.text)
+
+result = eq.query("zhaijisong", "6006456971")
+print(result)
 
 
