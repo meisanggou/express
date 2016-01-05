@@ -86,8 +86,14 @@ class ExpressQuery:
         return "true"
 
     def kd100(self, comCode, wayBill):
-        url = "http://www.kuaidi100.com/query?type=%s&postid=%s&id=1&valicode=&temp=0.023800994968041778" % (comCode, wayBill)
-        response = requests.get(url)
+        s = requests.session()
+        url = "http://www.kuaidi100.com/query?type=%s&postid=%s&id=1&valicode=&temp=0.023800994967041778" % (comCode, wayBill)
+        headers = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101 Firefox/38.0"}
+        s.get("http://www.kuaidi100.com/", headers=headers)
+        # print(s.cookies[""])
+        headers["Referer"] = "http://www.kuaidi100.com/"
+        headers["X-Requested-With"] = "XMLHttpRequest"
+        response = s.get(url, headers=headers)
         print(url)
         result = json.loads(response.text)
         express_info = []

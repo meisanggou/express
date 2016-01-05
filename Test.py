@@ -32,7 +32,7 @@ wx = WxManager()
 # response = requests.get("http://127.0.0.1:1191/look/", data=json.dumps({"listen_no": "1", "openid": "oFBQiwq5QlIBtUTsr2tuMIFnSORs"}))
 # print(response.text)
 
-result = eq.query("yuantong", "881021998432570372")
+result = eq.query("ems", "5130902381502")
 print(result)
 
 
