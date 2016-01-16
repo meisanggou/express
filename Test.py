@@ -29,7 +29,10 @@ wx = WxManager()
 # for zi in zto_info["express_info"]:
 #     print(zi["time"])
 #     print(zi["info"])
-response = requests.post("http://127.0.0.1:1191/explain/", data=json.dumps({"content": "  韵达  3100603805599               shuzi", "openid": "oFBQiwq5QlIBtUTsr2tuMIFnSORs"}))
-print(response.text)
+# response = requests.get("http://127.0.0.1:1191/look/", data=json.dumps({"listen_no": "1", "openid": "oFBQiwq5QlIBtUTsr2tuMIFnSORs"}))
+# print(response.text)
+
+result = eq.query("shentong", "220609044610")
+print(result)
 
 

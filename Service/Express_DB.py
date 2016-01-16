@@ -16,6 +16,7 @@ __author__ = 'zhouheng'
 
 my_email = MyEmailManager()
 
+
 class ExpressDB:
 
     def __init__(self):
@@ -148,13 +149,17 @@ class ExpressDB:
         self.db.execute(del_sql)
         return True
 
-    def select_listen_record(self, user_no):
-        select_sql = "SELECT l.com_code,waybill_num,remark,com_name FROM %s AS l,%s AS c WHERE user_no=%s " \
-                     "AND l.com_code=c.com_code;" % (self.listen_express, self.express_com, user_no)
+    def select_listen_record(self, user_no, listen_no=None):
+        select_sql = "SELECT listen_no,l.com_code,waybill_num,remark,com_name FROM %s AS l,%s AS c WHERE user_no=%s " \
+                     "AND l.com_code=c.com_code" % (self.listen_express, self.express_com, user_no)
+        if listen_no is not None:
+            select_sql += " AND listen_no=%s" % listen_no
+        select_sql += ";"
         result = self.db.execute(select_sql)
         listen_info = []
         for item in self.db.fetchall():
-            listen_info.append({"com_code": item[0], "waybill_num": item[1], "remark": item[2], "com_name": item[3]})
+            listen_info.append({"listen_no": item[0], "com_code": item[1], "waybill_num": item[2], "remark": item[3],
+                                "com_name": item[4]})
         return listen_info
 
     def check_listen_record(self, com_code, waybill_num, user_no):
@@ -185,6 +190,16 @@ class ExpressDB:
             return None
         db_r = self.db.fetchone()
         return {"com_code": db_r[0], "waybill_num": db_r[1], "remark": db_r[2], "query_result": db_r[3], "com_name": db_r[4]}
+
+    def select_record_info(self, user_no, com_code, waybill_num):
+        select_sql = "SELECT sign_time,sign_info,add_time FROM %s WHERE com_code='%s' AND waybill_num='%s' AND user_no=%s;" \
+                     % (self.transport_express, com_code, waybill_num, user_no)
+        self.db.execute(select_sql)
+        records = []
+        for item in self.db.fetchall():
+            records.append({"time": item[0].strftime(TIME_FORMAT), "info": item[1],
+                            "add_time": item[2].strftime(TIME_FORMAT)})
+        return records
 
     def del_pre_listen(self, listen_key, user_no):
         select_sql = "DELETE FROM %s WHERE listen_key='%s' AND user_no='%s';" % (self.pre_listen, listen_key, user_no)
@@ -221,21 +236,25 @@ class ExpressDB:
                 part_records.append({"time": "", "info": ""})
                 continue
             part_records.append(records[len_info + index - 3])
-        self.wx.send_express_template(user_name, openid, status, com_name, waybill, remark, part_records)
+        self.wx.send_express_template(user_name, openid, status, com_name, com_code, waybill, remark, part_records)
 
     def loop_query(self):
+        sleep_min = 5
         try:
             eq = ExpressQuery()
             while True:
                 # 睡眠5分钟
-                print("Sleep 5 Minutes")
-                sleep(300)
+                print("%s Sleep %s Minutes" % (datetime.now().strftime(TIME_FORMAT), sleep_min))
+                sleep(sleep_min * 60)
                 # 最后最晚查询过的一条记录
-                select_sql = "SELECT com_code,waybill_num,query_time,update_time,user_no,remark from listen_express where query_time = (SELECT MIN(query_time) FROM listen_express);"
-                self.db.execute(select_sql)
+                select_sql = "SELECT com_code,waybill_num,query_time,update_time,user_no,remark FROM listen_express WHERE query_time = (SELECT MIN(query_time) FROM listen_express);"
+                result = self.db.execute(select_sql)
+                if result <= 0:
+                    print("%s No Listen Record." % datetime.now().strftime(TIME_FORMAT))
+                    continue
                 record = self.db.fetchone()
                 if record[0] is None:
-                    print("No Listen Record")
+                    print("%s No Listen Record" % datetime.now().strftime(TIME_FORMAT))
                     continue
                 com_code = record[0]
                 waybill_num = record[1]
@@ -245,11 +264,11 @@ class ExpressDB:
                 user_info = self.uDB.select_user(user_no)
                 openid = user_info["openid"]
                 user_name = user_info["user_name"]
-                print("Start Handle %s %s" % (com_code, waybill_num))
+                print("%s Start Handle %s %s" % (datetime.now().strftime(TIME_FORMAT), com_code, waybill_num))
                 # 查询现在快速状态
                 query_result = eq.query(com_code, waybill_num)
                 if query_result["completed"] is True:
-                    print("%s %s completed" % (com_code, waybill_num))
+                    print("%s %s %s completed" % (datetime.now().strftime(TIME_FORMAT), com_code, waybill_num))
                     # 通知用户完成
                     self.send_wx(user_name, openid, "completed", com_code, waybill_num, remark, query_result["express_info"])
                     # 删除transport_express中对应的记录
@@ -272,7 +291,7 @@ class ExpressDB:
                     # 没有更新的快递信息
                     # 判断是否超过5天没有更新记录
                     if (datetime.now() - update_time).days >= 5:
-                        print("Long time no info")
+                        print("%s Long time no info" % datetime.now().strftime(TIME_FORMAT))
                         # 通知用户
                         self.send_wx(user_name, openid, "exception", com_code, waybill_num, remark, express_info)
                         # 删除transport_express中对应的记录
@@ -283,7 +302,7 @@ class ExpressDB:
                         # 更新 query_time
                         self.update_listen_record(com_code, waybill_num, user_no, False, True)
                 else:
-                    print("%s %s has new info." % (com_code, waybill_num))
+                    print("%s %s %s has new info." % (datetime.now().strftime(TIME_FORMAT), com_code, waybill_num))
                     # 通知用户
                     self.send_wx(user_name, openid, "transport", com_code, waybill_num, remark, express_info)
                     # 添加运输记录
@@ -295,5 +314,8 @@ class ExpressDB:
                     # 更新update_time query_time
                     self.update_listen_record(com_code, waybill_num, user_no, True, True)
         except Exception as e:
-            error_message = "loop query exception :%s" % str(e.args)
+            error_message = "%s loop query exception :%s" % (datetime.now().strftime(TIME_FORMAT), str(e.args))
+            print(error_message)
             my_email.send_system_exp("loop query function", "", error_message, 0)
+            print("%s run again" % datetime.now().strftime(TIME_FORMAT))
+            self.loop_query()

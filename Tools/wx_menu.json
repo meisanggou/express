@@ -1,54 +1,24 @@
 {
-  "button": [
-    {
-      "name": "我的快递",
-      "sub_button": [
+    "button": [
         {
-          "type": "click",
-          "name": "监视快递",
-          "key": "listen_express"
+            "name": "我的快递",
+            "type": "click",
+            "key": "my_express"
         },
         {
-          "type": "click",
-          "name": "快递公司",
-          "key": "express_com"
-        },
-        {
-          "type": "click",
-          "name": "我的快递",
-          "key": "my_express"
+            "name": "监听快递",
+            "sub_button": [
+                {
+                    "type": "click",
+                    "name": "如何监听",
+                    "key": "listen_express"
+                },
+                {
+                    "type": "click",
+                    "name": "快递公司",
+                    "key": "express_com"
+                }
+            ]
         }
-      ]
-    },
-    {
-      "name": "管理资源",
-      "sub_button": [
-        {
-          "name": "我的样本",
-          "type": "view",
-          "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx6b30be0bc9149832&redirect_uri=http%3A%2F%2Fwww.gene.ac%2F&response_type=code&scope=snsapi_base&state=minesample#wechat_redirect"
-        },
-        {
-          "name": "我的项目",
-          "type": "view",
-          "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx6b30be0bc9149832&redirect_uri=http%3A%2F%2Fwww.gene.ac%2F&response_type=code&scope=snsapi_base&state=mineproject#wechat_redirect"
-        },
-        {
-          "name": "公共样本",
-          "type": "view",
-          "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx6b30be0bc9149832&redirect_uri=http%3A%2F%2Fwww.gene.ac%2F&response_type=code&scope=snsapi_base&state=publicsample#wechat_redirect"
-        },
-        {
-          "name": "公共项目",
-          "type": "view",
-          "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx6b30be0bc9149832&redirect_uri=http%3A%2F%2Fwww.gene.ac%2F&response_type=code&scope=snsapi_base&state=publicproject#wechat_redirect"
-        }
-      ]
-    },
-    {
-      "name": "活动",
-      "type": "view",
-      "url": "http://www.gene.ac/activity/"
-    }
-  ]
+    ]
 }
