@@ -25,6 +25,7 @@ class ExpressDB:
         self.uDB = UserDB()
         self.completed_express = "completed_express"
         self.transport_express = "transport_express"
+        self.history_express = "history_express"
         self.listen_express = "listen_express"
         self.pre_listen = "pre_listen"
         self.express_com = "express_com"
@@ -44,6 +45,14 @@ class ExpressDB:
             ["remark", "varchar(10)", "NO", "", None, ""],
             ["update_time", "datetime", "NO", "", None, ""],
             ["query_time", "datetime", "NO", "", None, ""],
+            ["user_no", "int(11)", "NO", "", None, ""]
+        ]
+        self.history_express_desc = [
+            ["listen_no", "int(11)", "NO", "PRI", None, ""],
+            ["com_code", "varchar(10)", "NO", "", None, ""],
+            ["waybill_num", "varchar(20)", "NO", "", None, ""],
+            ["remark", "varchar(10)", "NO", "", None, ""],
+            ["completed_time", "datetime", "NO", "", None, ""],
             ["user_no", "int(11)", "NO", "", None, ""]
         ]
         self.pre_listen_desc = [
@@ -71,6 +80,12 @@ class ExpressDB:
 
     def check_transport_express(self):
         return self.db.check_table(self.transport_express, self.transport_express_desc)
+
+    def create_history_express(self, force=False):
+        return self.db.create_table(self.history_express, self.history_express_desc, force)
+
+    def check_history_express(self):
+        return self.db.check_table(self.history_express, self.history_express_desc)
 
     def create_listen_express(self, force=False):
         return self.db.create_table(self.listen_express, self.listen_express_desc, force)
