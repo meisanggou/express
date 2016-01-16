@@ -118,6 +118,14 @@ class ExpressDB:
         self.db.execute(insert_sql)
         return True
 
+    def new_history_record(self, listen_no, com_code, waybill_num, remark, user_no):
+        now_time = datetime.now().strftime(TIME_FORMAT)
+        insert_sql = "INSERT INTO %s (listen_no,com_code, waybill_num,completed_time,remark,user_no) " \
+                     "VALUES (%s,'%s','%s','%s','%s', %s);" \
+                     % (self.history_express, listen_no, com_code, waybill_num, now_time, remark, user_no)
+        self.db.execute(insert_sql)
+        return True
+
     def del_express_record(self, com_code, waybill_num, user_no):
         del_sql = "DELETE FROM %s WHERE com_code='%s' AND waybill_num='%s' AND user_no=%s;" % (self.transport_express, com_code, waybill_num, user_no)
         self.db.execute(del_sql)
@@ -247,7 +255,7 @@ class ExpressDB:
                 print("%s Sleep %s Minutes" % (datetime.now().strftime(TIME_FORMAT), sleep_min))
                 sleep(sleep_min * 60)
                 # 最后最晚查询过的一条记录
-                select_sql = "SELECT com_code,waybill_num,query_time,update_time,user_no,remark FROM listen_express WHERE query_time = (SELECT MIN(query_time) FROM listen_express);"
+                select_sql = "SELECT com_code,waybill_num,query_time,update_time,user_no,remark,listen_no FROM listen_express WHERE query_time = (SELECT MIN(query_time) FROM listen_express);"
                 result = self.db.execute(select_sql)
                 if result <= 0:
                     print("%s No Listen Record." % datetime.now().strftime(TIME_FORMAT))
@@ -261,6 +269,7 @@ class ExpressDB:
                 update_time = record[3]
                 user_no = record[4]
                 remark = record[5]
+                listen_no = record[6]
                 user_info = self.uDB.select_user(user_no)
                 openid = user_info["openid"]
                 user_name = user_info["user_name"]
@@ -277,6 +286,8 @@ class ExpressDB:
                     self.del_listen_record(com_code, waybill_num, user_no)
                     # 将全部记录记入completed_express
                     self.new_express_record(com_code, waybill_num, query_result["express_info"], user_no, True)
+                    # 将监听记录插入history_express
+                    self.new_history_record(listen_no, com_code, waybill_num, remark, user_no)
                     continue
                 express_info = query_result["express_info"]
                 if len(express_info) <= 0:

@@ -167,6 +167,9 @@ if __name__ == '__main__':
     result = eDB.check_transport_express()
     if result is False:
         eDB.create_transport_express(True)
+    result = eDB.check_history_express()
+    if result is False:
+        eDB.create_history_express(True)
     result = eDB.check_pre_listen()
     if result is False:
         eDB.create_pre_listen(True)
