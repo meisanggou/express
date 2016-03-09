@@ -31,7 +31,7 @@ class ExpressDB:
         self.express_com = "express_com"
         self.completed_express_desc = self.transport_express_desc = [
             ["recode_no", "int(11)", "NO", "PRI", None, "auto_increment"],
-            ["com_code", "varchar(10)", "NO", "", None, ""],
+            ["com_code", "varchar(30)", "NO", "", None, ""],
             ["waybill_num", "varchar(20)", "NO", "", None, ""],
             ["sign_time", "datetime", "NO", "", None, ""],
             ["sign_info", "varchar(150)", "NO", "", None, ""],
@@ -40,7 +40,7 @@ class ExpressDB:
         ]
         self.listen_express_desc = [
             ["listen_no", "int(11)", "NO", "PRI", None, "auto_increment"],
-            ["com_code", "varchar(10)", "NO", "", None, ""],
+            ["com_code", "varchar(30)", "NO", "", None, ""],
             ["waybill_num", "varchar(20)", "NO", "", None, ""],
             ["remark", "varchar(10)", "NO", "", None, ""],
             ["update_time", "datetime", "NO", "", None, ""],
@@ -49,7 +49,7 @@ class ExpressDB:
         ]
         self.pre_listen_desc = [
             ["listen_key", "char(32)", "NO", "PRI", None, ""],
-            ["com_code", "varchar(10)", "NO", "", None, ""],
+            ["com_code", "varchar(30)", "NO", "", None, ""],
             ["waybill_num", "varchar(20)", "NO", "", None, ""],
             ["remark", "varchar(10)", "NO", "", None, ""],
             ["insert_time", "datetime", "NO", "", None, ""],
