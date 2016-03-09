@@ -50,7 +50,7 @@ class ExpressDB:
         ]
         self.history_express_desc = [
             ["listen_no", "int(11)", "NO", "PRI", None, ""],
-            ["com_code", "varchar(10)", "NO", "", None, ""],
+            ["com_code", "varchar(30)", "NO", "", None, ""],
             ["waybill_num", "varchar(20)", "NO", "", None, ""],
             ["remark", "varchar(10)", "NO", "", None, ""],
             ["completed_time", "datetime", "NO", "", None, ""],
