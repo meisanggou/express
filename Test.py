@@ -34,7 +34,9 @@ wx = WxManager()
 
 # result = eq.query("shentong", "220609044610")
 # print(result)
+#
+# response = requests.post("http://127.0.0.1:1191/explain/", data=json.dumps({"content": "百世 350519408573 饮水机", "openid": "oFBQiwq5QlIBtUTsr2tuMIFnSORs"}))
+# print(response.text)
 
-response = requests.post("http://127.0.0.1:1191/explain/", data=json.dumps({"content": "百世 350519408573 饮水机", "openid": "oFBQiwq5QlIBtUTsr2tuMIFnSORs"}))
+response = requests.post("http://127.0.0.1:1191/add/", data=json.dumps({"listen_key": "83797c58e59311e5b32800163e0045ef", "openid": "oFBQiwq5QlIBtUTsr2tuMIFnSORs"}))
 print(response.text)
-
