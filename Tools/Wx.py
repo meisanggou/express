@@ -351,7 +351,7 @@ class WxManager:
             if error_code == 0:
                 return True, r
             if error_code in self.token_error_code:
-                self.refresh_token()
+                self.get_wx_token()
                 if freq > 2:
                     return False, res.text
                 return self._request_tencent(url, method, freq+1, **kwargs)
@@ -372,7 +372,7 @@ class WxManager:
                        "completed": "OFeSZXk6wNQVmX1GJ8P67bXe6FOoEMcMo1s49jIE-Nc",
                        "exception": "SHun5Ndh8NQDOCkFoi8XM5Lur5TyD1_9LrndC3QN9G0",
                        "mine": "Plj7_3JKJHB0EbAs7XdkLzTQ4l5Mo-IuxsXbN3TpXRc"}
-        url = "http://m.kuaidi100.com/index_all.html?type=%s&postid=%s&callbackurl=http://meisanggou.club" % (com_code, waybill)
+        url = "http://m.kuaidi100.com/index_all.html?type=%s&postid=%s&callbackurl=" % (com_code, waybill)
 
         key_value = {}
         key_value["user_name"] = {"value": user_name, "color": "#173177"}
