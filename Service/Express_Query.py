@@ -94,7 +94,8 @@ class ExpressQuery:
         headers["Referer"] = "http://www.kuaidi100.com/"
         headers["X-Requested-With"] = "XMLHttpRequest"
         response = s.get(url, headers=headers)
-        result = json.loads(response.text)
+        content = response.content.decode("utf-8")
+        result = json.loads(content)
         express_info = []
         status_code = 0
         completed = False
