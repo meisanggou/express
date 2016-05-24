@@ -11,7 +11,6 @@ from Web.views import express_wx_view as express_wx_view_blueprint
 __author__ = 'zhouheng'
 
 wx = WxManager()
-thread.start_new_thread(wx.write_token, ())
 msg_web = Flask("__name__")
 msg_web.register_blueprint(express_wx_view_blueprint)
 

@@ -22,8 +22,6 @@ my_email = MyEmailManager()
 
 class WxManager:
     def __init__(self):
-        self.token_file = ""
-        self.get_token_file()
         self.appID = "wx38e949d41b9d1053"
         self.appsecret = "c2eaf806849fa05cb12e202c55c2aae2"
         self.access_token = ""
@@ -46,26 +44,9 @@ class WxManager:
         self.listen_info = u"欢迎您使用我们的应用监听快递信息\n首先你先点击监听快递，再点击快递公司查看我们" \
                            u"支持的快递公司\n如果我们已经支持您要监听的快递公司，" \
                            u"回复快递+空格+快递公司名称+空格+运单号+空格+运单备注（例如：快递 申通快递 229255098587 电池）即可监听"
+        self.token_error_code = [41001, 40001, 42001, 40014, 42007]
 
     # 基础
-    def get_token_file(self):
-        self.token_file = tempfile.gettempdir() + "/express_wx.token"
-
-    def write_token(self):
-        try:
-            while True:
-                access_token = self.get_wx_token()
-                if access_token == "":
-                    sleep(60)
-                    continue
-                write = open(self.token_file, "w")
-                write.write(access_token)
-                write.close()
-                sleep(5400)  # sleep 90 minutes
-        except Exception as e:
-            error_message = str(e.args)
-            print(error_message)
-
     def get_wx_token(self, freq=0):
         if freq >= 5:
             my_email.send_system_exp("get wx access token ", freq, "didn't make it, many times", 0)
@@ -83,19 +64,9 @@ class WxManager:
                 my_email.send_system_exp("get wx access token", url, res.text, 0)
         elif res.status_code / 100 == 5:
             my_email.send_system_exp("get wx access token get again:%s" % freq, url, str(res.status_code), 0)
-            return self.get_access_token(freq + 1)
+            return self.get_wx_token(freq + 1)
         else:
             my_email.send_system_exp("get wx access token", url, str(res.status_code), 0)
-            return ""
-
-    def get_access_token(self):
-        try:
-            read = open(self.token_file)
-            return read.read()
-            read.close()
-        except Exception as e:
-            error_message = str(e.args)
-            my_email.send_system_exp("read wx access token ", self.token_file, error_message, 0)
             return ""
 
     def get_sha_value(self, timestamp, nonce, encrypt=None):
@@ -119,17 +90,23 @@ class WxManager:
             return False
         if ip in self.wx_ip:
             return True
-        url = "https://api.weixin.qq.com/cgi-bin/getcallbackip?access_token=%s" % self.get_access_token()
+        url = "https://api.weixin.qq.com/cgi-bin/getcallbackip?access_token=%s" % self.access_token
         res = requests.get(url)
         if res.status_code == 200:
-            r = json.loads(res.text)
+            r = res.json()
             if "ip_list" in r:
                 self.wx_ip = r["ip_list"]
                 if ip in self.wx_ip:
                     return True
                 else:
-                    my_email.send_system_exp("get wx ip false", url, ip + " | " + res.text, 0)
+                    # self.my_email.send_system_exp("check wx ip fail", url, ip + " | " + res.text, 0)
                     return False
+            if "errcode" in r:
+                error_code = r["errcode"]
+                if error_code in self.token_error_code:
+                    if freq < 2:
+                        self.get_wx_token()
+                        return self.check_wx_ip(ip=ip, freq=freq+1)
             else:
                 my_email.send_system_exp("get wx ip", url, res.text, 0)
                 return False
@@ -139,27 +116,6 @@ class WxManager:
         else:
             my_email.send_system_exp("get wx ip fail", url, str(res.status_code), 0)
             return False
-
-    # 自定义菜单管理
-    def create_menu(self, menu_json_str=""):
-        try:
-            url = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=%s" % self.get_access_token()
-            if menu_json_str == "":
-                read_json = open("../Tools/wx_menu.json")
-                btn_str = read_json.read()
-                btn_str = btn_str.decode("gbk").encode("utf8")
-            else:
-                btn_str = menu_json_str
-            res = requests.post(url, data=btn_str)
-            r = json.loads(res.text)
-            if r["errcode"] != 0:
-                my_email.send_system_exp("create wx menu", url, res.text, 0)
-                return res.text
-            return res.text
-        except Exception as e:
-            print(e.args)
-            my_email.send_system_exp("create wx menu exp", url, str(e.args), 0)
-            return str(e.args)
 
     # 接收消息
     def handle_msg(self, msg, signature, timestamp, nonce):
@@ -194,8 +150,6 @@ class WxManager:
                 content = self.handle_msg_text_express_user(content, from_user)
             elif len(content) > 2 and content[0:3] == "***":
                 content = self.handle_msg_text_add_listen(content, from_user)
-            elif len(content) > 2 and content[:3] == u"考研 ":
-                content = self.handle_msg_ky(content)
             elif len(content) > 4 and content[0:5] == u"我的快递 ":
                 content = self.handle_msg_text_look_listen(content, from_user)
             to_user = xml_msg.find("ToUserName").text
@@ -277,29 +231,6 @@ class WxManager:
         else:
             return response.status_code
         return content
-
-    def handle_msg_ky(self, content):
-        try:
-            info = content[3:].strip(" ")
-            request_url_format = "http://www.kfszsb.com/ajax_2014.asp?act=yjs&ksbh=%s&bmh=&zjhm=%s&t=0.34829033026471734"
-            if info == u"马铭章" or info == u"傻梦" or info == u"乖乖":
-                request_url = request_url_format % ('102856210201028', '411481199308247826')
-            else:
-                sp_info = info.split(" ")
-                ky_info = []
-                for item in sp_info:
-                    if item != " ":
-                        ky_info.append(item)
-                if len(ky_info) < 2:
-                    return u"输入信息有误"
-                request_url = request_url_format % (ky_info[0], ky_info[1])
-            res = requests.get(request_url)
-            if res.status_code != 200:
-                return content
-            return u"请求地址%s\n返回信息%s" % (request_url, res.text)
-        except Exception as e:
-            error_message = str(e.args)
-            return error_message
 
     def handle_msg_voice(self, xml_msg):
         try:
@@ -407,56 +338,52 @@ class WxManager:
             return ""
 
     # 发送消息
-    def send_express_template(self, user_name, openid, status, com, com_code, waybill, remark, records):
-        try:
-            if status not in ("transport", "completed", "exception", "mine"):
-                return "fail"
-            temp_status = {"transport": "6atTNaoeH-Xaqf4Q-tBYInLs_fqR0h1dcNOfAgIfUBc",
-                           "completed": "OFeSZXk6wNQVmX1GJ8P67bXe6FOoEMcMo1s49jIE-Nc",
-                           "exception": "SHun5Ndh8NQDOCkFoi8XM5Lur5TyD1_9LrndC3QN9G0",
-                           "mine": "Plj7_3JKJHB0EbAs7XdkLzTQ4l5Mo-IuxsXbN3TpXRc"}
-            url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s" % self.get_access_token()
-            request_data = {}
-            request_data["template_id"] = temp_status[status]
-            request_data["touser"] = openid
-            request_data["url"] = "http://m.kuaidi100.com/index_all.html?type=%s&postid=%s&callbackurl=http://meisanggou.club" % (com_code, waybill)
-            request_data["data"] = {}
-            request_data["data"]["user_name"] = {"value": user_name, "color": "#173177"}
-            request_data["data"]["com"] = {"value": com, "color": "#000000"}
-            request_data["data"]["waybill"] = {"value": waybill, "color": "#173177"}
-            request_data["data"]["remark"] = {"value": remark, "color": "#173177"}
-            request_data["data"]["time1"] = {"value": records[2]["time"], "color": "#000000"}
-            request_data["data"]["info1"] = {"value": records[2]["info"], "color": "#173177"}
-            request_data["data"]["time2"] = {"value": records[1]["time"], "color": "#000000"}
-            request_data["data"]["info2"] = {"value": records[1]["info"], "color": "#000000"}
-            request_data["data"]["time3"] = {"value": records[0]["time"], "color": "#173177"}
-            request_data["data"]["info3"] = {"value": records[0]["info"], "color": "#000000"}
-            res = requests.post(url, data=json.dumps(request_data))
-            if res.status_code == 200:
-                print(res.text)
-            else:
-                print(res.status_code)
-            return "success"
-        except Exception as e:
-            print(e.args)
+    def _request_tencent(self, url, method, freq=0, **kwargs):
+        request_url = url % {"access_token": self.access_token}
+        res = requests.request(method, request_url, **kwargs)
+        if res.status_code != 200:
+            if freq > 2:
+                return False, res.status_code
+            return self._request_tencent(url, method, freq+1, **kwargs)
+        r = res.json()
+        if "errcode" in r:
+            error_code = r["errcode"]
+            if error_code == 0:
+                return True, r
+            if error_code in self.token_error_code:
+                self.refresh_token()
+                if freq > 2:
+                    return False, res.text
+                return self._request_tencent(url, method, freq+1, **kwargs)
+        return True, r
 
-    # 网页服务
-    def get_openid(self, code, freq=0):
-        if freq >= 5:
-            return ""
-        url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&" \
-              "grant_type=authorization_code" % (self.appID, self.appsecret, code)
-        res = requests.get(url)
-        if res.status_code == 200:
-            r = json.loads(res.text)
-            if "openid" in r:
-                return r["openid"]
-            else:
-                my_email.send_system_exp("get wx openid by code fail", url, res.text, 0)
-                return ""
-        elif res.status_code / 100 == 5:
-            my_email.send_system_exp("get wx openid by code get again:%s" % freq, url, str(res.status_code), 0)
-            return self.get_openid(freq + 1)
-        else:
-            my_email.send_system_exp("get wx openid by code exp", url, str(res.status_code), 0)
-            return ""
+    def _send_template(self, template_id, touser, url, key_value):
+        request_url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%(access_token)s"
+        message_data = {}
+        for key in key_value:
+            message_data[key] = key_value[key]
+        request_data = {"template_id": template_id, "touser": touser, "url": url, "data": message_data}
+        return self._request_tencent(request_url, "POST", json=request_data)
+
+    def send_express_template(self, user_name, openid, status, com, com_code, waybill, remark, records):
+        if status not in ("transport", "completed", "exception", "mine"):
+            return "fail"
+        temp_status = {"transport": "6atTNaoeH-Xaqf4Q-tBYInLs_fqR0h1dcNOfAgIfUBc",
+                       "completed": "OFeSZXk6wNQVmX1GJ8P67bXe6FOoEMcMo1s49jIE-Nc",
+                       "exception": "SHun5Ndh8NQDOCkFoi8XM5Lur5TyD1_9LrndC3QN9G0",
+                       "mine": "Plj7_3JKJHB0EbAs7XdkLzTQ4l5Mo-IuxsXbN3TpXRc"}
+        url = "http://m.kuaidi100.com/index_all.html?type=%s&postid=%s&callbackurl=http://meisanggou.club" % (com_code, waybill)
+
+        key_value = {}
+        key_value["user_name"] = {"value": user_name, "color": "#173177"}
+        key_value["com"] = {"value": com, "color": "#000000"}
+        key_value["waybill"] = {"value": waybill, "color": "#173177"}
+        key_value["remark"] = {"value": remark, "color": "#173177"}
+        key_value["time1"] = {"value": records[2]["time"], "color": "#000000"}
+        key_value["info1"] = {"value": records[2]["info"], "color": "#173177"}
+        key_value["time2"] = {"value": records[1]["time"], "color": "#000000"}
+        key_value["info2"] = {"value": records[1]["info"], "color": "#000000"}
+        key_value["time3"] = {"value": records[0]["time"], "color": "#173177"}
+        key_value["info3"] = {"value": records[0]["info"], "color": "#000000"}
+
+        return self._send_template(temp_status[status], openid, url, key_value)
