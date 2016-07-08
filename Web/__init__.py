@@ -6,5 +6,3 @@ sys.path.append('..')
 __author__ = 'zhouheng'
 
 APIV1_service = "http://localhost:1201"
-
-
