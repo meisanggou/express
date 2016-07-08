@@ -2,8 +2,6 @@
 # !/usr/bin/env python
 
 import MySQLdb
-import sys
-import os
 
 __author__ = 'zhouheng'
 
@@ -33,8 +31,7 @@ class DB(object):
             self.host = remote_host
 
     def connect(self):
-        self.conn = MySQLdb.connect(host=self.host, port=3306, user='msg',
-                                        passwd='msg1237', db='express', charset='utf8')
+        self.conn = MySQLdb.connect(host=self.host, port=3306, user='msg', passwd='msg1237', db='express', charset='utf8')
         self.cursor = self.conn.cursor()
         self.conn.autocommit(True)
 
