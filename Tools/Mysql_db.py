@@ -24,11 +24,8 @@ class DB(object):
     cursor = None
     _sock_file = ''
 
-    def __init__(self, local=False):
-        if local is True:
-            self.host = local_host
-        else:
-            self.host = remote_host
+    def __init__(self):
+        self.host = remote_host
 
     def connect(self):
         self.conn = MySQLdb.connect(host=self.host, port=3306, user='msg', passwd='msg1237', db='express', charset='utf8')
