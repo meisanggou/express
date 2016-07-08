@@ -16,7 +16,6 @@ Usage:
 """
 
 remote_host = "gene.ac"
-local_host = "127.0.0.1"
 
 
 class DB(object):

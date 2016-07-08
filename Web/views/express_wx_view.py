@@ -1,12 +1,10 @@
 #!/user/bin/env python
 # -*- coding: utf-8 -*-
 
-import requests
 import sys
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from Tools.MyEmail import MyEmailManager
 from Tools.Wx import WxManager
-from Web import APIV1_service
 
 sys.path.append('..')
 
@@ -48,15 +46,24 @@ def check_signature():
 @express_wx_view.route("/express/wx/", methods=["POST"])
 def get_wx_msg():
     try:
+        # request_data = request.data
+        # args = ""
+        # for key in dict(request.args).keys():
+        #     args += "%s=%s&" % (key, request.args[key])
+        # args += "request_ip=%s" % request.headers["X-Real-Ip"]
+        # res_result = requests.post(APIV1_service + '/api/v1/express/wx/?' + args, data=request_data)
+        # if res_result.status_code / 100 != 2:
+        #     return ""
+        # return res_result.text
+        request_ip = request.headers["X-Real-Ip"]
+        # 判断请求IP是否是微信服务器IP
+        if wx.check_wx_ip(request_ip) is False:
+            return jsonify({"status": 800, "message": "check wx service fail"})
+        signature = request.args["signature"]
+        timestamp = request.args["timestamp"]
+        nonce = request.args["nonce"]
         request_data = request.data
-        args = ""
-        for key in dict(request.args).keys():
-            args += "%s=%s&" % (key, request.args[key])
-        args += "request_ip=%s" % request.headers["X-Real-Ip"]
-        res_result = requests.post(APIV1_service + '/api/v1/express/wx/?' + args, data=request_data)
-        if res_result.status_code / 100 != 2:
-            return ""
-        return res_result.text
+        return wx.handle_msg(request_data, signature, timestamp, nonce)
     except Exception as e:
         print(e.args)
         my_email.send_system_exp(request.url, request.data, str(e.args), 0)
