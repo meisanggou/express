@@ -65,6 +65,5 @@ def get_wx_msg():
         request_data = request.data
         return wx.handle_msg(request_data, signature, timestamp, nonce)
     except Exception as e:
-        print(e.args)
-        my_email.send_system_exp(request.url, request.data, str(e.args), 0)
+        my_email.send_system_exp(request.url, request.data, str(e), 0)
         return ""
