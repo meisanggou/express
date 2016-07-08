@@ -2,7 +2,6 @@
 # coding: utf-8
 import sys
 sys.path.append("..")
-import thread
 from Tools.Wx import WxManager
 from flask import Flask
 from Web.views import express_wx_view as express_wx_view_blueprint
