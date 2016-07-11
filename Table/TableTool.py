@@ -16,7 +16,7 @@ class TableToolManager:
         self.cursor = self.conn.cursor()
 
     def list_table(self):
-        sql = "SELECT TABLE_NAME, CREATE_TIME,TABLE_COMMENT FROM TABLES WHERE TABLE_SCHEMA='clinic' AND TABLE_TYPE='BASE TABLE';"
+        sql = "SELECT TABLE_NAME, CREATE_TIME,TABLE_COMMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA='clinic' AND TABLE_TYPE='BASE TABLE';"
         self.cursor.execute(sql)
         table_list = []
         for item in self.cursor.fetchall():
@@ -25,7 +25,7 @@ class TableToolManager:
 
     def get_table_info(self, table_name):
         sql = "SELECT COLUMN_NAME, COLUMN_TYPE,COLUMN_KEY,COLUMN_DEFAULT,EXTRA,COLUMN_COMMENT,IS_NULLABLE " \
-              "FROM columns WHERE TABLE_NAME='%s' AND TABLE_SCHEMA='clinic';" % table_name
+              "FROM information_schema.columns WHERE TABLE_NAME='%s' AND TABLE_SCHEMA='clinic';" % table_name
         self.cursor.execute(sql)
         column_info = []
         for item in self.cursor.fetchall():
