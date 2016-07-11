@@ -32,19 +32,19 @@ def bind():
         return json.dumps({"status": 001, "message": "query success", "data": user})
     else:
         return json.dumps({"status": 400})
-    old_user = uDB.select_user_name(openid)
+    old_user = uDB.select_user(openid=openid)
     if old_user is None:
         print("enter")
         if uDB.select_user(user_name=user_name) is not None:
             return json.dumps({"status": 411})
         uDB.new_express_user(user_name, openid)
     else:
-        if old_user == user_name:
+        if old_user["user_name"] == user_name:
             return json.dumps({"status": 412})
         if uDB.select_user(user_name=user_name) is not None:
             return json.dumps({"status": 411})
         uDB.update_express_user(user_name, openid)
-    return json.dumps({"status": 001, "message": "bind success", "data": {"old": old_user, "new": user_name}})
+    return json.dumps({"status": 001, "message": "bind success", "data": {"old": old_user["user_name"], "new": user_name}})
 
 
 @msg_service.route('/explain/', methods=["POST"])
@@ -53,9 +53,10 @@ def explain_express():
         request_data = json.loads(request.data)
         content = request_data["content"]
         openid = request_data["openid"]
-        user_no = uDB.select_user_no(openid)
-        if user_no is None:
+        user = uDB.select_user(openid=openid)
+        if user is None:
             return json.dumps({"status": 410})
+        user_no = user["user_no"]
         infos = content.split(" ")
         infos_len = len(infos)
         for index in range(1, infos_len):
@@ -96,9 +97,10 @@ def add_listen():
     request_data = json.loads(request.data)
     openid = request_data["openid"]
     listen_key = request_data["listen_key"]
-    user_no = uDB.select_user_no(openid)
-    if user_no is None:
+    user = uDB.select_user(openid=openid)
+    if user is None:
         return json.dumps({"status": 410})
+    user_no = user["user_no"]
     listen_info = eDB.select_pre_listen(listen_key, user_no)
     if listen_info is None:
         return json.dumps({"status": 422})
@@ -142,9 +144,10 @@ def get_com():
 def mine_express():
     request_data = json.loads(request.data)
     openid = request_data["openid"]
-    user_no = uDB.select_user_no(openid)
-    if user_no is None:
+    user = uDB.select_user(openid=openid)
+    if user is None:
         return json.dumps({"status": 410})
+    user_no = user["user_no"]
     listen_info = eDB.select_listen_record(user_no)
     return json.dumps({"status": 001, "message": "get success", "data": listen_info})
 

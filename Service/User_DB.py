@@ -28,20 +28,6 @@ class UserDB:
         self.db.execute(update_sql)
         return True
 
-    def select_user_name(self, openid):
-        select_sql = "SELECT user_name FROM %s WHERE openid='%s';" % (self.user, openid)
-        result = self.db.execute(select_sql)
-        if result <= 0:
-            return None
-        return self.db.fetchone()[0]
-
-    def select_user_no(self, openid):
-        select_sql = "SELECT user_no FROM %s WHERE openid='%s';" % (self.user, openid)
-        result = self.db.execute(select_sql)
-        if result <= 0:
-            return None
-        return self.db.fetchone()[0]
-
     def select_user(self, user_no=None, openid=None, user_name=None):
         select_sql = "SELECT user_no,user_name,openid FROM %s WHERE " % self.user
         if user_no is not None:
