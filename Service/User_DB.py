@@ -13,17 +13,6 @@ class UserDB:
         self.db = DB()
         self.db.connect()
         self.user = "express_user"
-        self.user_desc = [
-            ["user_no", "int(11)", "NO", "PRI", None, "auto_increment"],
-            ["user_name", "varchar(15)", "NO", "", None, ""],
-            ["openid", "char(28)", "NO", "", None, ""]
-        ]
-
-    def create_express_user(self, force=False):
-        return self.db.create_table(self.user, self.user_desc, force)
-
-    def check_express_user(self):
-        return self.db.check_table(self.user, self.user_desc)
 
     def new_express_user(self, user_name, openid):
         if len(openid) != 28:

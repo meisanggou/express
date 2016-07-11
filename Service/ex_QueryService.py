@@ -158,26 +158,5 @@ if __name__ == '__main__':
     eq = ExpressQuery()
     eb = ExpressBasic()
     uDB = UserDB()
-    result = eDB.check_completed_express()
-    if result is False:
-        eDB.create_completed_express(True)
-    result = eDB.check_listen_express()
-    if result is False:
-        eDB.create_listen_express(True)
-    result = eDB.check_transport_express()
-    if result is False:
-        eDB.create_transport_express(True)
-    result = eDB.check_history_express()
-    if result is False:
-        eDB.create_history_express(True)
-    result = eDB.check_pre_listen()
-    if result is False:
-        eDB.create_pre_listen(True)
-    result = uDB.check_express_user()
-    if result is False:
-        uDB.create_express_user(True)
-    result = eDB.check_express_com()
-    if result is False:
-        eDB.create_express_com(True)
     thread.start_new_thread(eDB.loop_query, ())
     msg_service.run(host="0.0.0.0", port=1191)
