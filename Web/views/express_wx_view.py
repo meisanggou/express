@@ -46,15 +46,6 @@ def check_signature():
 @express_wx_view.route("/express/wx/", methods=["POST"])
 def get_wx_msg():
     try:
-        # request_data = request.data
-        # args = ""
-        # for key in dict(request.args).keys():
-        #     args += "%s=%s&" % (key, request.args[key])
-        # args += "request_ip=%s" % request.headers["X-Real-Ip"]
-        # res_result = requests.post(APIV1_service + '/api/v1/express/wx/?' + args, data=request_data)
-        # if res_result.status_code / 100 != 2:
-        #     return ""
-        # return res_result.text
         request_ip = request.headers["X-Real-Ip"]
         # 判断请求IP是否是微信服务器IP
         if wx.check_wx_ip(request_ip) is False:

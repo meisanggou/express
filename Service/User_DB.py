@@ -54,12 +54,13 @@ class UserDB:
         return self.db.fetchone()[0]
 
     def select_user(self, user_no=None, openid=None, user_name=None):
+        select_sql = "SELECT user_no,user_name,openid FROM %s WHERE " % self.user
         if user_no is not None:
-            select_sql = "SELECT user_no,user_name,openid FROM %s WHERE user_no=%s;" % (self.user, user_no)
+            select_sql += "user_no=%s;" % user_no
         elif openid is not None:
-            select_sql = "SELECT user_no,user_name,openid FROM %s WHERE openid='%s';" % (self.user, openid)
+            select_sql += "openid='%s';" % openid
         elif user_name is not None:
-            select_sql = "SELECT user_no,user_name,openid FROM %s WHERE user_name='%s';" % (self.user, user_name)
+            select_sql += "user_name='%s';" % user_name
         else:
             return None
         result = self.db.execute(select_sql)
