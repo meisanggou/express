@@ -2,254 +2,313 @@
   {
     "table_cols": [
       {
-        "pri_key": true, 
-        "auto_increment": true, 
-        "col_comment": "", 
-        "col_name": "recode_no", 
+        "pri_key": true,
+        "auto_increment": true,
+        "col_comment": "",
+        "col_name": "recode_no",
         "col_type": "int(11)"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "com_code", 
-        "col_type": "varchar(30)", 
+        "col_comment": "",
+        "col_name": "com_code",
+        "col_type": "varchar(30)",
         "allow_null": true
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "waybill_num", 
+        "col_comment": "",
+        "col_name": "waybill_num",
         "col_type": "varchar(20)"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "sign_time", 
+        "col_comment": "",
+        "col_name": "sign_time",
         "col_type": "datetime"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "sign_info", 
+        "col_comment": "",
+        "col_name": "sign_info",
         "col_type": "varchar(150)"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "user_no", 
+        "col_comment": "",
+        "col_name": "user_no",
         "col_type": "int(11)"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "add_time", 
+        "col_comment": "",
+        "col_name": "add_time",
         "col_type": "datetime"
       }
-    ], 
-    "table_comment": "", 
+    ],
+    "table_comment": "",
     "table_name": "completed_express"
-  }, 
+  },
   {
     "table_cols": [
       {
-        "pri_key": true, 
-        "col_comment": "", 
-        "col_name": "com_code", 
+        "pri_key": true,
+        "col_comment": "",
+        "col_name": "com_code",
         "col_type": "varchar(30)"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "com_name", 
+        "col_comment": "",
+        "col_name": "com_name",
         "col_type": "varchar(20)"
       }
-    ], 
-    "table_comment": "", 
+    ],
+    "table_comment": "",
     "table_name": "express_com"
-  }, 
+  },
   {
     "table_cols": [
       {
-        "pri_key": true, 
-        "auto_increment": true, 
-        "col_comment": "", 
-        "col_name": "user_no", 
+        "pri_key": true,
+        "auto_increment": true,
+        "col_comment": "",
+        "col_name": "user_no",
         "col_type": "int(11)"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "user_name", 
+        "col_comment": "",
+        "col_name": "user_name",
         "col_type": "varchar(15)"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "openid", 
+        "col_comment": "",
+        "col_name": "openid",
         "col_type": "char(28)"
       }
-    ], 
-    "table_comment": "", 
+    ],
+    "table_comment": "",
     "table_name": "express_user"
-  }, 
+  },
   {
     "table_cols": [
       {
-        "pri_key": true, 
-        "col_comment": "", 
-        "col_name": "listen_no", 
+        "pri_key": true,
+        "col_comment": "",
+        "col_name": "listen_no",
         "col_type": "int(11)"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "com_code", 
-        "col_type": "varchar(30)", 
+        "col_comment": "",
+        "col_name": "com_code",
+        "col_type": "varchar(30)",
         "allow_null": true
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "waybill_num", 
+        "col_comment": "",
+        "col_name": "waybill_num",
         "col_type": "varchar(20)"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "remark", 
+        "col_comment": "",
+        "col_name": "remark",
         "col_type": "varchar(10)"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "completed_time", 
+        "col_comment": "",
+        "col_name": "completed_time",
         "col_type": "datetime"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "user_no", 
+        "col_comment": "",
+        "col_name": "user_no",
         "col_type": "int(11)"
       }
-    ], 
-    "table_comment": "", 
+    ],
+    "table_comment": "",
     "table_name": "history_express"
-  }, 
+  },
   {
     "table_cols": [
       {
-        "pri_key": true, 
-        "auto_increment": true, 
-        "col_comment": "", 
-        "col_name": "listen_no", 
+        "pri_key": true,
+        "auto_increment": true,
+        "col_comment": "",
+        "col_name": "listen_no",
         "col_type": "int(11)"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "com_code", 
-        "col_type": "varchar(30)", 
+        "col_comment": "",
+        "col_name": "com_code",
+        "col_type": "varchar(30)",
         "allow_null": true
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "waybill_num", 
+        "col_comment": "",
+        "col_name": "waybill_num",
         "col_type": "varchar(20)"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "remark", 
+        "col_comment": "",
+        "col_name": "remark",
         "col_type": "varchar(10)"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "update_time", 
+        "col_comment": "",
+        "col_name": "update_time",
         "col_type": "datetime"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "query_time", 
+        "col_comment": "",
+        "col_name": "query_time",
         "col_type": "datetime"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "user_no", 
+        "col_comment": "",
+        "col_name": "user_no",
         "col_type": "int(11)"
       }
-    ], 
-    "table_comment": "", 
+    ],
+    "table_comment": "",
     "table_name": "listen_express"
-  }, 
+  },
   {
     "table_cols": [
       {
-        "pri_key": true, 
-        "col_comment": "", 
-        "col_name": "listen_key", 
+        "pri_key": true,
+        "col_comment": "",
+        "col_name": "listen_key",
         "col_type": "char(32)"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "com_code", 
-        "col_type": "varchar(30)", 
+        "col_comment": "",
+        "col_name": "com_code",
+        "col_type": "varchar(30)",
         "allow_null": true
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "waybill_num", 
+        "col_comment": "",
+        "col_name": "waybill_num",
         "col_type": "varchar(20)"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "remark", 
+        "col_comment": "",
+        "col_name": "remark",
         "col_type": "varchar(10)"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "insert_time", 
+        "col_comment": "",
+        "col_name": "insert_time",
         "col_type": "datetime"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "query_result", 
+        "col_comment": "",
+        "col_name": "query_result",
         "col_type": "varchar(20000)"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "user_no", 
+        "col_comment": "",
+        "col_name": "user_no",
         "col_type": "int(11)"
       }
-    ], 
-    "table_comment": "", 
+    ],
+    "table_comment": "",
     "table_name": "pre_listen"
-  }, 
+  },
   {
     "table_cols": [
       {
-        "pri_key": true, 
-        "auto_increment": true, 
-        "col_comment": "", 
-        "col_name": "recode_no", 
+        "pri_key": true,
+        "auto_increment": true,
+        "col_comment": "",
+        "col_name": "recode_no",
         "col_type": "int(11)"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "com_code", 
-        "col_type": "varchar(30)", 
+        "col_comment": "",
+        "col_name": "com_code",
+        "col_type": "varchar(30)",
         "allow_null": true
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "waybill_num", 
+        "col_comment": "",
+        "col_name": "waybill_num",
         "col_type": "varchar(20)"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "sign_time", 
+        "col_comment": "",
+        "col_name": "sign_time",
         "col_type": "datetime"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "sign_info", 
+        "col_comment": "",
+        "col_name": "sign_info",
         "col_type": "varchar(150)"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "user_no", 
+        "col_comment": "",
+        "col_name": "user_no",
         "col_type": "int(11)"
-      }, 
+      },
       {
-        "col_comment": "", 
-        "col_name": "add_time", 
+        "col_comment": "",
+        "col_name": "add_time",
         "col_type": "datetime"
       }
-    ], 
-    "table_comment": "", 
+    ],
+    "table_comment": "",
     "table_name": "transport_express"
+  },
+  {
+    "table_cols": [
+      {
+        "pri_key": true,
+        "auto_increment": true,
+        "col_comment": "log编号无实际含义",
+        "col_name": "log_no",
+        "col_type": "int(11)"
+      },
+      {
+        "col_comment": "请求开始的时间",
+        "col_name": "run_begin",
+        "col_type": "int(11)"
+      },
+      {
+        "col_comment": "请求的主机地址",
+        "col_name": "host",
+        "col_type": "varchar(30)"
+      },
+      {
+        "col_comment": "请求的URL",
+        "col_name": "url",
+        "col_type": "varchar(200)"
+      },
+      {
+        "col_comment": "请求的URL",
+        "col_name": "method",
+        "col_type": "varchar(7)"
+      },
+      {
+        "col_comment": "请求的账户名",
+        "col_name": "account",
+        "col_type": "varchar(20)",
+        "allow_null": true
+      },
+      {
+        "col_comment": "请求的IP地址",
+        "col_name": "ip",
+        "col_type": "bigint(20)"
+      },
+      {
+        "col_comment": "日志级别",
+        "col_name": "level",
+        "col_type": "varchar(10)"
+      },
+      {
+        "col_comment": "执行的信息",
+        "col_name": "info",
+        "col_type": "varchar(500)"
+      },
+      {
+        "col_comment": "执行的时间",
+        "col_name": "run_time",
+        "col_type": "float"
+      }
+    ],
+    "table_comment": "记录每一次API请求",
+    "table_name": "run_log"
   }
 ]

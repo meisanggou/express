@@ -7,17 +7,13 @@ from Express_DB import ExpressDB
 from Express_Query import ExpressQuery
 from Express_Basic import ExpressBasic
 from User_DB import UserDB
-from flask import Flask, request
+from flask import request
 import thread
 import json
 import re
+from Service import create_app
 
-msg_service = Flask('__name__')
-
-
-@msg_service.route('/ping/', methods=["GET"])
-def ping():
-    return "true"
+msg_service = create_app()
 
 
 @msg_service.route('/bind/', methods=["POST"])
@@ -26,7 +22,7 @@ def bind():
     if "user_name" in request_data and "openid" in request_data:
         user_name = request_data["user_name"].strip(" ")
         openid = request_data["openid"]
-        search_result = re.search(u'[^0-9a-zA-Z\u4e00-\u9fa5]', user_name)
+        search_result = re.search(u'[^\w\u4e00-\u9fa5]', user_name)
         if search_result is not None:
             return json.dumps({"status": 400})
         if len(user_name) <= 0 or len(user_name) > 15:

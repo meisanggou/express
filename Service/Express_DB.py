@@ -250,7 +250,7 @@ class ExpressDB:
                     # 更新update_time query_time
                     self.update_listen_record(com_code, waybill_num, user_no, True, True)
         except Exception as e:
-            error_message = "%s loop query exception :%s" % (datetime.now().strftime(TIME_FORMAT), str(e.args))
+            error_message = "%s loop query exception :%s" % (datetime.now().strftime(TIME_FORMAT), str(e))
             print(error_message)
             my_email.send_system_exp("loop query function", "", error_message, 0)
             print("%s run again" % datetime.now().strftime(TIME_FORMAT))
