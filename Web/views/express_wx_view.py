@@ -16,9 +16,6 @@ wx = WxManager()
 
 express_wx_view = Blueprint('express_wx_view', __name__)
 
-my_email = MyEmailManager()
-wx = WxManager()
-
 
 @express_wx_view.route("/express/wx/ping/", methods=["GET"])
 def ping():

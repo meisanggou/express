@@ -60,6 +60,6 @@ class My_PCManager:
         current_user = "Current User: %s" % self.get_user()
         info = "%s %s %s" % (ip, hostname, current_user)
         return info
-
-pc = My_PCManager()
-pc_info = pc.get_info()
+if __name__ == "__main__":
+    pc = My_PCManager()
+    pc_info = pc.get_info()
