@@ -25,5 +25,3 @@ class ExpressBasic:
             return False, u"运单已签收", []
         no = uuid.uuid1().hex
         return True, no, result["express_info"]
-
-
