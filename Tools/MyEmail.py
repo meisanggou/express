@@ -8,7 +8,6 @@ from email.mime.text import MIMEText
 import smtplib
 import thread
 from datetime import datetime
-from My_PC import pc_info
 
 
 class MyEmailManager:
@@ -53,7 +52,6 @@ class MyEmailManager:
             content = "api_url: %s" % api_url
             content += "<br>request_data: %s" % request_data
             content += "<br>error message: %s" % error_message
-            content += "<br>service info: %s" % pc_info
             content += "<br>Now is: %s" % datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             if developer < len(self.developer_emails):
                 developer_email = self.developer_emails[0]
