@@ -199,7 +199,7 @@ class ExpressDB:
                 openid = user_info["openid"]
                 user_name = user_info["user_name"]
                 print("%s Start Handle %s %s" % (datetime.now().strftime(TIME_FORMAT), com_code, waybill_num))
-                # 查询现在快速状态
+                # 查询现在快递状态
                 query_result = eq.query(com_code, waybill_num)
                 if query_result["completed"] is True:
                     print("%s %s %s completed" % (datetime.now().strftime(TIME_FORMAT), com_code, waybill_num))
@@ -218,7 +218,7 @@ class ExpressDB:
                 if len(express_info) <= 0:
                     continue
                 # 查询数据库中已有记录进行比对
-                select_sql = "SELECT MAX(sign_time) FROM transport_express WHERE com_code='%s' AND waybill_num='%s';" % (com_code, waybill_num)
+                select_sql = "SELECT MAX(sign_time) FROM transport_express WHERE com_code='%s' AND waybill_num='%s' AND user_no=%s;" % (com_code, waybill_num, user_no)
                 result = self.db.execute(select_sql)
                 max_sign_time = None
                 if result > 0:
