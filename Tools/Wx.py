@@ -165,7 +165,7 @@ class WxManager:
 
     def handle_msg_text_express(self, content, openid):
         no_prefix = content[2:].strip(" ")
-        response = requests.post(query_service_url + "/explain/", data=json.dumps({"content": no_prefix, "openid": openid}))
+        response = requests.post(query_service_url + "/explain/", json={"content": no_prefix, "openid": openid})
         if response.status_code / 100 == 2:
             result = response.json()
             if result["status"] == 001:
@@ -182,7 +182,7 @@ class WxManager:
 
     def handle_msg_text_express_user(self, content, openid):
         no_prefix = content[3:]
-        response = requests.post(query_service_url + "/bind/", data=json.dumps({"user_name": no_prefix, "openid": openid}))
+        response = requests.post(query_service_url + "/bind/", json={"user_name": no_prefix, "openid": openid})
         if response.status_code / 100 == 2:
             if response.json()["status"] == 001:
                 data = response.json()["data"]
@@ -205,7 +205,7 @@ class WxManager:
         keys = re.findall(regex, content)
         if len(keys) != 1:
             return content
-        response = requests.post(query_service_url + "/add/", data=json.dumps({"listen_key": keys[0], "openid": openid}))
+        response = requests.post(query_service_url + "/add/", json={"listen_key": keys[0], "openid": openid})
         if response.status_code / 100 == 2:
             if response.json()["status"] == 001:
                 listen_key = response.json()["data"]
@@ -226,7 +226,7 @@ class WxManager:
             return content
         if len(listen_no[0]) > 10:
             return content
-        response = requests.get(query_service_url + "/look/", data=json.dumps({"listen_no": int(listen_no[0]), "openid": openid}))
+        response = requests.get(query_service_url + "/look/", json={"listen_no": int(listen_no[0]), "openid": openid})
         if response.status_code / 100 == 2:
             if response.json()["status"] == 001:
                 return u"即将推送给您"
@@ -306,7 +306,7 @@ class WxManager:
             elif key == "listen_express":
                 content = self.listen_info
             elif key == "my_express":
-                response = requests.get(query_service_url + "/mine/", data=json.dumps({"openid": from_user}))
+                response = requests.get(query_service_url + "/mine/", json={"openid": from_user})
                 if response.status_code / 100 == 2:
                     if response.json()["status"] == 001:
                         listen_info = response.json()["data"]
