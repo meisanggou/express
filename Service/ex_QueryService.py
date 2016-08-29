@@ -85,7 +85,7 @@ def explain_express():
         remark = ""
         if len(infos) >= 3:
             remark = infos[2][:10]
-        eDB.new_pre_listen(message, com_code, waybill_num, remark, user_no, json.dumps(query_result))
+        eDB.new_pre_listen(message, com_code, waybill_num, remark, user_no, query_result)
         data = {"com_code": com_code, "waybill_num": waybill_num, "listen_key": message, "com_name": com_name, "remark": remark}
         if len(query_result) <= 0:
             return jsonify({"status": 003, "message": "check success", "data": data})

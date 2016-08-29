@@ -3,7 +3,7 @@
 import sys
 sys.path.append('..')
 from datetime import datetime
-from time import sleep
+import json
 
 from Tools.Mysql_db import DB
 from Service import TIME_FORMAT
@@ -103,16 +103,11 @@ class ExpressDB:
         return False
 
     def new_pre_listen(self, listen_key, com_code, waybill_num, remark, user_no, query_result):
-        try:
-            now_time = datetime.now().strftime(TIME_FORMAT)
-            query_result = self.db.format_string(query_result)
-            insert_sql = "INSERT INTO %s (listen_key,com_code,waybill_num,insert_time,query_result,remark,user_no) " \
-                         "VALUES ('%s','%s','%s','%s','%s','%s', %s);" \
-                         % (self.pre_listen, listen_key, com_code, waybill_num, now_time, query_result, remark, user_no)
-            self.db.execute(insert_sql)
-            return True
-        except Exception as e:
-            print(e.args)
+        insert_value = {"listen_key": listen_key, "com_code": com_code, "waybill_num": waybill_num,
+                        "remark": remark, "user_no": user_no, "insert_time": datetime.now().strftime(TIME_FORMAT),
+                        "query_result": json.dumps(query_result)}
+        self.db.execute_insert(self.pre_listen, args=insert_value)
+        return True
 
     def select_pre_listen(self, listen_key, user_no):
         select_sql = "SELECT p.com_code,waybill_num,remark,query_result,com_name FROM %s AS p,%s AS c " \
