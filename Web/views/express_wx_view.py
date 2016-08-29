@@ -45,8 +45,8 @@ def get_wx_msg():
     try:
         request_ip = request.headers["X-Real-Ip"]
         # 判断请求IP是否是微信服务器IP
-        if wx.check_wx_ip(request_ip) is False:
-            return jsonify({"status": 800, "message": "check wx service fail"})
+        # if wx.check_wx_ip(request_ip) is False:
+        #     return jsonify({"status": 800, "message": "check wx service fail"})
         signature = request.args["signature"]
         timestamp = request.args["timestamp"]
         nonce = request.args["nonce"]
