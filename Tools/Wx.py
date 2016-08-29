@@ -1,13 +1,10 @@
 #! /usr/bin/env python
 # coding: utf-8
 
-import sys
 import datetime
 import requests
 import json
 import time
-from time import sleep
-import tempfile
 from hashlib import sha1
 import binascii
 import re
