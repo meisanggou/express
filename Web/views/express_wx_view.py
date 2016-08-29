@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from Tools.MyEmail import MyEmailManager
 from Tools.Wx import WxManager
 
