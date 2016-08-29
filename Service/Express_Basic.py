@@ -20,7 +20,7 @@ class ExpressBasic:
             return False, u"运单号不正确", []
         result = self.eq.query(com, waybill)
         if result["status_code"] == 0:
-            return False, u"未查到相关快递信息", []
+            return True, u"未查到相关快递信息", []
         if result["completed"] is True:
             return False, u"运单已签收", []
         no = uuid.uuid1().hex
