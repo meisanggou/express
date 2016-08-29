@@ -172,86 +172,74 @@ class ExpressDB:
         self.wx.send_express_template(user_name, openid, status, com_name, com_code, waybill, remark, part_records)
 
     def loop_query(self):
-        sleep_min = 5
-        try:
-            eq = ExpressQuery()
-            while True:
-                # 睡眠5分钟
-                print("%s Sleep %s Minutes" % (datetime.now().strftime(TIME_FORMAT), sleep_min))
-                sleep(sleep_min * 60)
-                # 最后最晚查询过的一条记录
-                select_sql = "SELECT com_code,waybill_num,query_time,update_time,user_no,remark,listen_no FROM listen_express WHERE query_time = (SELECT MIN(query_time) FROM listen_express);"
-                result = self.db.execute(select_sql)
-                if result <= 0:
-                    print("%s No Listen Record." % datetime.now().strftime(TIME_FORMAT))
-                    continue
-                record = self.db.fetchone()
-                if record[0] is None:
-                    print("%s No Listen Record" % datetime.now().strftime(TIME_FORMAT))
-                    continue
-                com_code = record[0]
-                waybill_num = record[1]
-                update_time = record[3]
-                user_no = record[4]
-                remark = record[5]
-                listen_no = record[6]
-                user_info = self.uDB.select_user(user_no)
-                openid = user_info["openid"]
-                user_name = user_info["user_name"]
-                print("%s Start Handle %s %s" % (datetime.now().strftime(TIME_FORMAT), com_code, waybill_num))
-                # 查询现在快递状态
-                query_result = eq.query(com_code, waybill_num)
-                if query_result["completed"] is True:
-                    print("%s %s %s completed" % (datetime.now().strftime(TIME_FORMAT), com_code, waybill_num))
-                    # 通知用户完成
-                    self.send_wx(user_name, openid, "completed", com_code, waybill_num, remark, query_result["express_info"])
-                    # 删除transport_express中对应的记录
-                    self.del_express_record(com_code, waybill_num, user_no)
-                    # 删除listen_express中对应的记录
-                    self.del_listen_record(com_code, waybill_num, user_no)
-                    # 将全部记录记入completed_express
-                    self.new_express_record(com_code, waybill_num, query_result["express_info"], user_no, True)
-                    # 将监听记录插入history_express
-                    self.new_history_record(listen_no, com_code, waybill_num, remark, user_no)
-                    continue
-                express_info = query_result["express_info"]
-                if len(express_info) <= 0:
-                    continue
-                # 查询数据库中已有记录进行比对
-                select_sql = "SELECT MAX(sign_time) FROM transport_express WHERE com_code='%s' AND waybill_num='%s' AND user_no=%s;" % (com_code, waybill_num, user_no)
-                result = self.db.execute(select_sql)
-                max_sign_time = None
-                if result > 0:
-                    max_sign_time = self.db.fetchone()[0]
-                if max_sign_time is not None and max_sign_time >= datetime.strptime(express_info[-1]["time"], TIME_FORMAT):
-                    # 没有更新的快递信息
-                    # 判断是否超过5天没有更新记录
-                    if (datetime.now() - update_time).days >= 5:
-                        print("%s Long time no info" % datetime.now().strftime(TIME_FORMAT))
-                        # 通知用户
-                        self.send_wx(user_name, openid, "exception", com_code, waybill_num, remark, express_info)
-                        # 删除transport_express中对应的记录
-                        self.del_express_record(com_code, waybill_num, user_no)
-                        # 删除listen_express中对应的记录
-                        self.del_listen_record(com_code, waybill_num, user_no)
-                    else:
-                        # 更新 query_time
-                        self.update_listen_record(com_code, waybill_num, user_no, False, True)
-                else:
-                    print("%s %s %s has new info." % (datetime.now().strftime(TIME_FORMAT), com_code, waybill_num))
-                    # 通知用户
-                    self.send_wx(user_name, openid, "transport", com_code, waybill_num, remark, express_info)
-                    # 添加运输记录
-                    add_record = []
-                    for record in express_info:
-                        if max_sign_time is None or max_sign_time < datetime.strptime(record["time"], TIME_FORMAT):
-                            add_record.append(record)
-                    self.new_express_record(com_code, waybill_num, add_record, user_no, False)
-                    # 更新update_time query_time
-                    self.update_listen_record(com_code, waybill_num, user_no, True, True)
-        except Exception as e:
-            error_message = "%s loop query exception :%s" % (datetime.now().strftime(TIME_FORMAT), str(e))
-            print(error_message)
-            my_email.send_system_exp("loop query function", "", error_message, 0)
-            print("%s run again" % datetime.now().strftime(TIME_FORMAT))
-            self.loop_query()
+        eq = ExpressQuery()
+        # 最后最晚查询过的一条记录
+        select_sql = "SELECT com_code,waybill_num,query_time,update_time,user_no,remark,listen_no FROM listen_express WHERE query_time = (SELECT MIN(query_time) FROM listen_express);"
+        result = self.db.execute(select_sql)
+        if result <= 0:
+            print("%s No Listen Record." % datetime.now().strftime(TIME_FORMAT))
+            return
+        record = self.db.fetchone()
+        if record[0] is None:
+            print("%s No Listen Record" % datetime.now().strftime(TIME_FORMAT))
+            return
+        com_code = record[0]
+        waybill_num = record[1]
+        update_time = record[3]
+        user_no = record[4]
+        remark = record[5]
+        listen_no = record[6]
+        user_info = self.uDB.select_user(user_no)
+        openid = user_info["openid"]
+        user_name = user_info["user_name"]
+        print("%s Start Handle %s %s" % (datetime.now().strftime(TIME_FORMAT), com_code, waybill_num))
+        # 查询现在快递状态
+        query_result = eq.query(com_code, waybill_num)
+        if query_result["completed"] is True:
+            print("%s %s %s completed" % (datetime.now().strftime(TIME_FORMAT), com_code, waybill_num))
+            # 通知用户完成
+            self.send_wx(user_name, openid, "completed", com_code, waybill_num, remark, query_result["express_info"])
+            # 删除transport_express中对应的记录
+            self.del_express_record(com_code, waybill_num, user_no)
+            # 删除listen_express中对应的记录
+            self.del_listen_record(com_code, waybill_num, user_no)
+            # 将全部记录记入completed_express
+            self.new_express_record(com_code, waybill_num, query_result["express_info"], user_no, True)
+            # 将监听记录插入history_express
+            self.new_history_record(listen_no, com_code, waybill_num, remark, user_no)
+            return
+        express_info = query_result["express_info"]
+        if len(express_info) <= 0:
+            return
+        # 查询数据库中已有记录进行比对
+        select_sql = "SELECT MAX(sign_time) FROM transport_express WHERE com_code='%s' AND waybill_num='%s' AND user_no=%s;" % (com_code, waybill_num, user_no)
+        result = self.db.execute(select_sql)
+        max_sign_time = None
+        if result > 0:
+            max_sign_time = self.db.fetchone()[0]
+        if max_sign_time is not None and max_sign_time >= datetime.strptime(express_info[-1]["time"], TIME_FORMAT):
+            # 没有更新的快递信息
+            # 判断是否超过5天没有更新记录
+            if (datetime.now() - update_time).days >= 5:
+                print("%s Long time no info" % datetime.now().strftime(TIME_FORMAT))
+                # 通知用户
+                self.send_wx(user_name, openid, "exception", com_code, waybill_num, remark, express_info)
+                # 删除transport_express中对应的记录
+                self.del_express_record(com_code, waybill_num, user_no)
+                # 删除listen_express中对应的记录
+                self.del_listen_record(com_code, waybill_num, user_no)
+            else:
+                # 更新 query_time
+                self.update_listen_record(com_code, waybill_num, user_no, False, True)
+        else:
+            print("%s %s %s has new info." % (datetime.now().strftime(TIME_FORMAT), com_code, waybill_num))
+            # 通知用户
+            self.send_wx(user_name, openid, "transport", com_code, waybill_num, remark, express_info)
+            # 添加运输记录
+            add_record = []
+            for record in express_info:
+                if max_sign_time is None or max_sign_time < datetime.strptime(record["time"], TIME_FORMAT):
+                    add_record.append(record)
+            self.new_express_record(com_code, waybill_num, add_record, user_no, False)
+            # 更新update_time query_time
+            self.update_listen_record(com_code, waybill_num, user_no, True, True)

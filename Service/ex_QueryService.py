@@ -3,17 +3,18 @@
 
 __author__ = 'zhouheng'
 
+from apscheduler.schedulers.background import BackgroundScheduler
 from Express_DB import ExpressDB
 from Express_Query import ExpressQuery
 from Express_Basic import ExpressBasic
 from User_DB import UserDB
 from flask import request
-import thread
 import json
 import re
 from Service import create_app
 
 msg_service = create_app()
+back_scheduler = BackgroundScheduler()
 
 
 @msg_service.route('/bind/', methods=["POST"])
@@ -158,5 +159,6 @@ if __name__ == '__main__':
     eq = ExpressQuery()
     eb = ExpressBasic()
     uDB = UserDB()
-    thread.start_new_thread(eDB.loop_query, ())
+    back_scheduler.add_job(eDB.loop_query, trigger="interval", minutes=5)
+    back_scheduler.start()
     msg_service.run(host="0.0.0.0", port=1191)
