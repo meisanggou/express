@@ -18,7 +18,7 @@ class ExpressBasic:
         no = uuid.uuid1().hex
         search_result = re.search('[^0-9]', waybill)
         if search_result is not None:
-            return False, u"运单号不正确", []
+            return False, u"运单号应为纯数字", []
         result = self.eq.query(com, waybill)
         if result["status_code"] == 0:
             return True, no, []
