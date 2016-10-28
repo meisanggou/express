@@ -112,6 +112,7 @@ class ExpressQuery:
         return kd100_info
 
     def query(self, comCode, wayBill):
+        return self.kd100(comCode, wayBill)
         # if comCode == "shentong":
         #     return self.sto(wayBill)
         if comCode == "zhongtong":
