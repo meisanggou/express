@@ -343,6 +343,7 @@ class WxManager:
     # 发送消息
     def _request_tencent(self, url, method, freq=0, **kwargs):
         request_url = url % {"access_token": self.access_token}
+        kwargs["verify"] = False
         res = requests.request(method, request_url, **kwargs)
         if res.status_code != 200:
             if freq > 2:
