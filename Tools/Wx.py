@@ -45,28 +45,31 @@ class WxManager:
                            u"回复快递+空格+快递公司名称+空格+运单号+空格+运单备注（例如：快递 申通快递 229255098587 电池）即可监听"
         self.token_error_code = [41001, 40001, 42001, 40014, 42007]
 
+    @staticmethod
+    def _request(method, url, **kwargs):
+        kwargs["verify"] = False
+        return requests.request(method, url, **kwargs)
+
     # 基础
     def get_wx_token(self, freq=0):
         if freq >= 5:
-            my_email.send_system_exp("get wx access token ", freq, "didn't make it, many times", 0)
             return ""
         url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s" \
               % (self.appID, self.appsecret)
-        res = requests.get(url)
+        res = self._request("GET", url)
         if res.status_code == 200:
-            r = json.loads(res.text)
+            r = res.json()
             if "access_token" in r:
                 self.access_token = r["access_token"]
                 self.expires_time = datetime.datetime.now() + datetime.timedelta(seconds=r["expires_in"])
                 return self.access_token
-            else:
-                my_email.send_system_exp("get wx access token", url, res.text, 0)
         elif res.status_code / 100 == 5:
-            my_email.send_system_exp("get wx access token get again:%s" % freq, url, str(res.status_code), 0)
             return self.get_wx_token(freq + 1)
         else:
-            my_email.send_system_exp("get wx access token", url, str(res.status_code), 0)
             return ""
+
+    def refresh_token(self):
+        self.get_wx_token()
 
     def get_sha_value(self, timestamp, nonce, encrypt=None):
         temp_arr = [self.token, timestamp, nonce]
@@ -342,9 +345,9 @@ class WxManager:
 
     # 发送消息
     def _request_tencent(self, url, method, freq=0, **kwargs):
-        request_url = url % {"access_token": self.access_token}
-        kwargs["verify"] = False
-        res = requests.request(method, request_url, **kwargs)
+        access_token = kwargs.pop("access_token", self.access_token)
+        request_url = url % {"access_token": access_token}
+        res = self._request(method, request_url, **kwargs)
         if res.status_code != 200:
             if freq > 2:
                 return False, res.status_code
@@ -355,10 +358,12 @@ class WxManager:
             if error_code == 0:
                 return True, r
             if error_code in self.token_error_code:
-                self.get_wx_token()
+                self.refresh_token()
                 if freq > 2:
-                    return False, res.text
+                    return False, r
                 return self._request_tencent(url, method, freq+1, **kwargs)
+            else:
+                return False, r
         return True, r
 
     def _send_template(self, template_id, touser, url, key_value):
